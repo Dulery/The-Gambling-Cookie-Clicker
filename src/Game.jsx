@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { saveScore, loadScore } from './firebase.js'
 import Casino from './Casino.jsx'
 import Bank from './Bank.jsx'
+import Life, { getDefaultAssets } from './Life.jsx'
 
 const UPGRADES = [
   { id: 'cursor',  name: '🖱️ Cursor',   desc: '+1 cookie/sec',    baseCost: 50,    cps: 1    },
@@ -45,12 +46,14 @@ export default function Game({ user, onLogout }) {
   const [tab, setTab]                 = useState('clicker')
   const [loan, setLoan]               = useState(0)
   const [gambleResults, setGambleResults] = useState({})
+  const [assets, setAssets]           = useState(getDefaultAssets)
 
-  const cookiesRef = useRef(0)
-  const totalRef   = useRef(0)
-  const ownedRef   = useRef({})
-  const loanRef    = useRef(0)
-  const saveTimer  = useRef(null)
+  const cookiesRef   = useRef(0)
+  const totalRef     = useRef(0)
+  const ownedRef     = useRef({})
+  const loanRef      = useRef(0)
+  const assetsRef    = useRef(getDefaultAssets())
+  const saveTimer    = useRef(null)
 
   const userId = user?.profile?.sub
 
@@ -59,6 +62,7 @@ export default function Game({ user, onLogout }) {
   useEffect(() => { totalRef.current = totalCookies }, [totalCookies])
   useEffect(() => { ownedRef.current = owned }, [owned])
   useEffect(() => { loanRef.current = loan }, [loan])
+  useEffect(() => { assetsRef.current = assets }, [assets])
 
   // Load save from Firebase
   useEffect(() => {
@@ -70,6 +74,7 @@ export default function Game({ user, onLogout }) {
           setTotal(data.totalCookies ?? 0)
           setOwned(data.owned ?? {})
           setLoan(data.loan ?? 0)
+          setAssets({ ...getDefaultAssets(), ...(data.assets ?? {}) })
         }
       })
       .catch(console.error)
@@ -117,6 +122,7 @@ export default function Game({ user, onLogout }) {
           totalCookies: totalRef.current,
           owned: ownedRef.current,
           loan: loanRef.current,
+          assets: assetsRef.current,
           savedAt: new Date().toISOString(),
         })
       } catch (e) {
@@ -171,6 +177,21 @@ export default function Game({ user, onLogout }) {
     scheduleSave()
   }
 
+  const handleSellAsset = (asset) => {
+    const qty = assets[asset.id] ?? asset.startQty
+    if (qty <= 0) return
+    setAssets(a => ({ ...a, [asset.id]: qty - 1 }))
+    setCookies(c => c + asset.price)
+    scheduleSave()
+  }
+
+  const handleBuyItem = (item) => {
+    if (cookies < item.cost) return
+    setCookies(c => c - item.cost)
+    setAssets(a => ({ ...a, [item.id]: (a[item.id] ?? 0) + 1 }))
+    scheduleSave()
+  }
+
   const handleGamble = (gamble) => {
     if (cookies < gamble.cost) return
     const win = Math.random() < gamble.chance
@@ -220,6 +241,9 @@ export default function Game({ user, onLogout }) {
         <button className={`game-tab ${tab === 'bank' ? 'active' : ''}`} onClick={() => setTab('bank')}>
           🏦 Banque{loan > 0 ? <span className="tab-debt-badge"> !</span> : null}
         </button>
+        <button className={`game-tab ${tab === 'life' ? 'active' : ''}`} onClick={() => setTab('life')}>
+          💼 Vie
+        </button>
       </nav>
 
       <main className="game-main">
@@ -264,6 +288,13 @@ export default function Game({ user, onLogout }) {
         </section>
         ) : tab === 'casino' ? (
           <Casino cookies={cookies} onResult={handleCasinoResult} />
+        ) : tab === 'life' ? (
+          <Life
+            cookies={cookies}
+            assets={assets}
+            onSell={handleSellAsset}
+            onBuy={handleBuyItem}
+          />
         ) : (
           <Bank cookies={cookies} loan={loan} onBorrow={handleBorrow} onRepay={handleRepay} />
         )}

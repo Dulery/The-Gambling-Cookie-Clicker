@@ -189,7 +189,10 @@ function Blackjack({ cookies, onResult }) {
   const [outcome, setOutcome] = useState(null)      // bj | win | lose | push
   const mountedRef = useRef(true)
 
-  useEffect(() => () => { mountedRef.current = false }, [])
+  useEffect(() => {
+    mountedRef.current = true
+    return () => { mountedRef.current = false }
+  }, [])
 
   const maxBet = Math.max(1, Math.min(cookies, 999999))
 
