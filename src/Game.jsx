@@ -47,6 +47,8 @@ export default function Game({ user, onLogout }) {
   const [loan, setLoan]               = useState(0)
   const [gambleResults, setGambleResults] = useState({})
   const [assets, setAssets]           = useState(getDefaultAssets)
+  const [dead, setDead]               = useState(false)
+  const [deathCause, setDeathCause]   = useState(null)
 
   const cookiesRef   = useRef(0)
   const totalRef     = useRef(0)
@@ -180,9 +182,35 @@ export default function Game({ user, onLogout }) {
   const handleSellAsset = (asset) => {
     const qty = assets[asset.id] ?? asset.startQty
     if (qty <= 0) return
-    setAssets(a => ({ ...a, [asset.id]: qty - 1 }))
+    const newQty = qty - 1
+    setAssets(a => ({ ...a, [asset.id]: newQty }))
     setCookies(c => c + asset.price)
     scheduleSave()
+    if (asset.fatalAtZero && newQty === 0) {
+      setTimeout(() => handleDeath(asset), 600)
+    }
+  }
+
+  const handleDeath = (asset) => {
+    setDeathCause(asset)
+    setCookies(0)
+    setTotal(0)
+    setOwned({})
+    setLoan(0)
+    setAssets(getDefaultAssets())
+    setDead(true)
+    // Save reset immediately
+    if (userId) {
+      saveScore(userId, {
+        cookies: 0, totalCookies: 0, owned: {}, loan: 0,
+        assets: getDefaultAssets(), savedAt: new Date().toISOString(),
+      }).catch(console.error)
+    }
+  }
+
+  const handleRespawn = () => {
+    setDead(false)
+    setDeathCause(null)
   }
 
   const handleBuyItem = (item) => {
@@ -220,6 +248,24 @@ export default function Game({ user, onLogout }) {
 
   return (
     <div className="game">
+
+      {/* Death overlay */}
+      {dead && (
+        <div className="death-screen">
+          <div className="death-box">
+            <div className="death-skull">💀</div>
+            <h2 className="death-title">Vous êtes mort</h2>
+            <p className="death-msg">
+              Vous avez vendu votre <strong>{deathCause?.name}</strong>…<br />
+              Tout est perdu. Cookies, upgrades, emprunt — tout.
+            </p>
+            <button className="btn-respawn" onClick={handleRespawn}>
+              Recommencer à zéro
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <header className="game-header">
         <div className="user-info">

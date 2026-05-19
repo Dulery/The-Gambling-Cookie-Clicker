@@ -1314,3 +1314,102 @@ body {
   font-size: 0.72rem;
   font-weight: 800;
 }
+
+/* ── Fatal organ styles ────────────────── */
+
+.asset-fatal:not(.asset-sold) {
+  border-color: rgba(248,81,73,0.4);
+}
+
+.asset-fatal:not(.asset-sold):hover {
+  border-color: var(--red);
+}
+
+.fatal-badge {
+  margin-left: 0.4rem;
+  font-size: 0.85rem;
+}
+
+.btn-sell-fatal {
+  background: linear-gradient(135deg, #7f1d1d, #b91c1c) !important;
+}
+
+/* ── Death screen ──────────────────────── */
+
+.death-screen {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.88);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: death-fade-in 0.4s ease;
+}
+
+@keyframes death-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.death-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2rem;
+  padding: 3rem 3.5rem;
+  background: #0d0000;
+  border: 2px solid var(--red);
+  border-radius: 18px;
+  text-align: center;
+  box-shadow: 0 0 60px rgba(248,81,73,0.35);
+  max-width: 420px;
+}
+
+.death-skull {
+  font-size: 5rem;
+  animation: skull-shake 0.6s ease 0.2s both;
+}
+
+@keyframes skull-shake {
+  0%  { transform: rotate(0deg) scale(0.5); opacity: 0; }
+  40% { transform: rotate(-8deg) scale(1.15); }
+  60% { transform: rotate(6deg); }
+  80% { transform: rotate(-3deg); }
+  100%{ transform: rotate(0deg) scale(1); opacity: 1; }
+}
+
+.death-title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--red);
+  letter-spacing: 0.04em;
+}
+
+.death-msg {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.65;
+}
+
+.death-msg strong {
+  color: var(--text);
+}
+
+.btn-respawn {
+  background: linear-gradient(135deg, #ef4444, #7f1d1d);
+  color: #fff;
+  border: none;
+  padding: 0.8rem 2.2rem;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  transition: transform 0.12s, box-shadow 0.12s;
+}
+
+.btn-respawn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(248,81,73,0.45);
+}

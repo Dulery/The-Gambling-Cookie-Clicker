@@ -13,15 +13,15 @@ export const ASSETS = [
   { id: 'voiture', name: 'Voiture',  icon: '🚗', startQty: 1,  price: 2000,  category: 'biens'   },
   { id: 'enfant',  name: 'Enfant',   icon: '👶', startQty: 2,  price: 3000,  category: 'biens'   },
   { id: 'chien',   name: 'Chien',    icon: '🐶', startQty: 1,  price: 800,   category: 'biens'   },
-  { id: 'cerveau', name: 'Cerveau',  icon: '🧠', startQty: 1,  price: 20000, category: 'organes' },
-  { id: 'coeur',   name: 'Cœur',     icon: '❤️', startQty: 1,  price: 15000, category: 'organes' },
-  { id: 'poumon',  name: 'Poumon',   icon: '🫁', startQty: 2,  price: 8000,  category: 'organes' },
-  { id: 'rein',    name: 'Rein',     icon: '🫘', startQty: 2,  price: 5000,  category: 'organes' },
-  { id: 'foie',    name: 'Foie',     icon: '🫀', startQty: 1,  price: 4000,  category: 'organes' },
-  { id: 'rate',    name: 'Rate',     icon: '🦠', startQty: 1,  price: 2500,  category: 'organes' },
-  { id: 'oeil',    name: 'Œil',      icon: '👁️', startQty: 2,  price: 1500,  category: 'organes' },
-  { id: 'oreille', name: 'Oreille',  icon: '👂', startQty: 2,  price: 1000,  category: 'organes' },
-  { id: 'dent',    name: 'Dent',     icon: '🦷', startQty: 32, price: 200,   category: 'organes' },
+  { id: 'cerveau', name: 'Cerveau',  icon: '🧠', startQty: 1,  price: 20000, category: 'organes', fatalAtZero: true  },
+  { id: 'coeur',   name: 'Cœur',     icon: '❤️', startQty: 1,  price: 15000, category: 'organes', fatalAtZero: true  },
+  { id: 'poumon',  name: 'Poumon',   icon: '🫁', startQty: 2,  price: 8000,  category: 'organes', fatalAtZero: true  },
+  { id: 'rein',    name: 'Rein',     icon: '🫘', startQty: 2,  price: 5000,  category: 'organes', fatalAtZero: true  },
+  { id: 'foie',    name: 'Foie',     icon: '🫀', startQty: 1,  price: 4000,  category: 'organes', fatalAtZero: true  },
+  { id: 'rate',    name: 'Rate',     icon: '🦠', startQty: 1,  price: 2500,  category: 'organes'                    },
+  { id: 'oeil',    name: 'Œil',      icon: '👁️', startQty: 2,  price: 1500,  category: 'organes'                    },
+  { id: 'oreille', name: 'Oreille',  icon: '👂', startQty: 2,  price: 1000,  category: 'organes'                    },
+  { id: 'dent',    name: 'Dent',     icon: '🦷', startQty: 32, price: 200,   category: 'organes'                    },
 ]
 
 // ── Shop items (resale = 60 % of cost) ───────────────────────────────────────
@@ -60,13 +60,20 @@ function Affaires({ assets, onSell }) {
   const organes = ASSETS.filter(a => a.category === 'organes')
   const achats  = SHOP_ITEMS.filter(item => (assets[item.id] ?? 0) > 0)
 
-  const renderCard = (item, isSold = false) => {
-    const qty = assets[item.id] ?? item.startQty ?? 0
+  const isFatalSell = (item) =>
+    item.fatalAtZero && (assets[item.id] ?? item.startQty ?? 0) === 1
+
+  const renderCard = (item) => {
+    const qty   = assets[item.id] ?? item.startQty ?? 0
+    const fatal = isFatalSell(item)
     return (
-      <div key={item.id} className={`asset-card ${qty === 0 ? 'asset-sold' : ''}`}>
+      <div key={item.id} className={`asset-card ${qty === 0 ? 'asset-sold' : ''} ${fatal ? 'asset-fatal' : ''}`}>
         <span className="asset-icon">{item.icon}</span>
         <div className="asset-info">
-          <span className="asset-name">{item.name}</span>
+          <span className="asset-name">
+            {item.name}
+            {fatal && qty > 0 && <span className="fatal-badge" title="Organe vital — vendre = mort">☠️</span>}
+          </span>
           <span className="asset-qty">
             {qty === 0 ? 'Vendu' : qty > 1 ? `×${qty}` : ''}
           </span>
@@ -74,7 +81,7 @@ function Affaires({ assets, onSell }) {
         <div className="asset-right">
           <span className="asset-price">{fmt(item.price)} 🍪</span>
           <button
-            className="btn-sell"
+            className={`btn-sell ${fatal ? 'btn-sell-fatal' : ''}`}
             onClick={() => onSell(item)}
             disabled={qty === 0}
           >
