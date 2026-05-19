@@ -351,3 +351,670 @@ body {
   .cookie-btn { font-size: 6rem; }
   .stat-value { font-size: 1.8rem; }
 }
+
+/* ── Game tabs (Clicker / Casino) ────────── */
+
+.game-tabs {
+  display: flex;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 0 1rem;
+  flex-shrink: 0;
+}
+
+.game-tab {
+  padding: 0.55rem 1.4rem;
+  background: transparent;
+  color: var(--text-muted);
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.game-tab.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+/* ── Casino wrapper ──────────────────────── */
+
+.casino {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+.casino-tabs {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.casino-tab {
+  padding: 0.45rem 1.2rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.15s;
+}
+
+.casino-tab.active {
+  background: rgba(245,166,35,0.12);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ── Shared bet row ──────────────────────── */
+
+.bet-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.bet-input {
+  width: 110px;
+  padding: 0.4rem 0.6rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 0.95rem;
+}
+
+.btn-bet {
+  padding: 0.35rem 0.7rem;
+  border-radius: 5px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+  background: var(--surface);
+  color: var(--text-muted);
+  transition: opacity 0.15s;
+}
+.btn-bet.accent { color: var(--accent); border-color: var(--accent); }
+.btn-bet.red    { color: var(--red);    border-color: var(--red);    }
+
+/* ── Slot Machine ────────────────────────── */
+
+.slot-machine {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2rem;
+  padding: 2rem 2.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  width: 100%;
+  max-width: 460px;
+}
+
+.slot-machine h3 {
+  font-size: 1.3rem;
+  color: var(--accent);
+}
+
+.slot-reels {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.slot-reel {
+  width: 82px;
+  height: 82px;
+  background: var(--bg);
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.6rem;
+  user-select: none;
+}
+
+.slot-reel.spinning {
+  animation: reel-blur 0.08s linear infinite;
+}
+
+@keyframes reel-blur {
+  0%   { transform: translateY(-3px); }
+  50%  { transform: translateY(3px);  }
+  100% { transform: translateY(-3px); }
+}
+
+.slot-msg {
+  font-size: 1.15rem;
+  font-weight: 700;
+  padding: 0.45rem 1.4rem;
+  border-radius: 8px;
+}
+.slot-win  { background: rgba(63,185,80,0.2);  color: var(--green); }
+.slot-lose { background: rgba(248,81,73,0.2);  color: var(--red);   }
+
+.slot-payouts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.2rem 1.2rem;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  text-align: center;
+}
+
+.btn-spin {
+  background: linear-gradient(135deg, #f5a623, #e07b06);
+  color: #000;
+  border: none;
+  padding: 0.75rem 2.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.12s;
+}
+.btn-spin:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(245,166,35,0.45);
+}
+.btn-spin:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ── Blackjack ───────────────────────────── */
+
+.blackjack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2rem;
+  padding: 2rem 2.5rem;
+  background: #0b2e18;
+  border: 1px solid #1e5c30;
+  border-radius: 14px;
+  width: 100%;
+  max-width: 540px;
+}
+
+.blackjack h3 {
+  font-size: 1.3rem;
+  color: #4ade80;
+}
+
+.bj-table {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+}
+
+.bj-side {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.bj-divider {
+  height: 1px;
+  background: rgba(255,255,255,0.1);
+  width: 100%;
+}
+
+.bj-label {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+.bj-hand {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.card {
+  height: 86px;
+  width: auto;
+  border-radius: 6px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.6);
+}
+
+.card-back {
+  height: 86px;
+  width: 60px;
+  background: repeating-linear-gradient(
+    45deg, #1a3a6a, #1a3a6a 6px, #2a5aaa 6px, #2a5aaa 12px
+  );
+  border-radius: 6px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.6);
+}
+
+.bj-outcome {
+  padding: 0.65rem 1.8rem;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+.bj-win  { background: rgba(63,185,80,0.25);  color: #4ade80; border: 1px solid #4ade80; }
+.bj-lose { background: rgba(248,81,73,0.2);   color: #f87171; border: 1px solid #f87171; }
+.bj-push { background: rgba(245,166,35,0.2);  color: var(--accent); border: 1px solid var(--accent); }
+
+.bj-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.btn-hit {
+  background: #22c55e; color: #000;
+  border: none; padding: 0.6rem 1.5rem;
+  border-radius: 8px; font-size: 1rem; font-weight: 700; cursor: pointer;
+}
+.btn-stand {
+  background: #ef4444; color: #fff;
+  border: none; padding: 0.6rem 1.5rem;
+  border-radius: 8px; font-size: 1rem; font-weight: 700; cursor: pointer;
+}
+.btn-double {
+  background: var(--accent); color: #000;
+  border: none; padding: 0.6rem 1.5rem;
+  border-radius: 8px; font-size: 1rem; font-weight: 700; cursor: pointer;
+}
+.btn-deal {
+  background: #22c55e; color: #000;
+  border: none; padding: 0.65rem 2rem;
+  border-radius: 8px; font-size: 1rem; font-weight: 700; cursor: pointer;
+}
+.btn-deal:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.bj-dealing { color: rgba(255,255,255,0.5); font-style: italic; font-size: 0.9rem; }
+
+.bj-rules {
+  color: rgba(255,255,255,0.35);
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+/* ── Wheel of Fortune ───────────────────────── */
+
+.wheel-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2rem;
+  padding: 2rem 2.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  width: 100%;
+  max-width: 460px;
+}
+
+.wheel-container h3 {
+  font-size: 1.3rem;
+  color: var(--accent);
+}
+
+.wheel-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 18px;
+}
+
+.wheel-pointer {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 13px solid transparent;
+  border-right: 13px solid transparent;
+  border-top: 26px solid #f5a623;
+  z-index: 10;
+  filter: drop-shadow(0 2px 6px rgba(245,166,35,0.7));
+}
+
+/* ── Stat debt color ─────────────────────── */
+
+.stat-debt { color: var(--red) !important; }
+
+/* ── Tab debt badge ──────────────────────── */
+
+.tab-debt-badge {
+  display: inline-block;
+  background: var(--red);
+  color: #fff;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-align: center;
+  line-height: 16px;
+  margin-left: 4px;
+  vertical-align: middle;
+}
+
+/* ── Bank ────────────────────────────────── */
+
+.bank {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.5rem 2rem;
+  overflow-y: auto;
+  max-width: 680px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.bank-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.bank-title-icon {
+  font-size: 2.8rem;
+  filter: drop-shadow(0 0 12px rgba(245,166,35,0.5));
+}
+
+.bank-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 0.15rem;
+}
+
+.bank-subtitle {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+/* Status cards row */
+.bank-status {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.bank-balance-card,
+.bank-loan-card {
+  flex: 1;
+  min-width: 180px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 1rem 1.25rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+
+.bank-balance-card.positive {
+  background: rgba(63,185,80,0.08);
+  border-color: rgba(63,185,80,0.35);
+}
+
+.bank-balance-card.negative {
+  background: rgba(248,81,73,0.08);
+  border-color: rgba(248,81,73,0.35);
+}
+
+.bank-loan-card {
+  background: rgba(248,81,73,0.08);
+  border-color: rgba(248,81,73,0.35);
+}
+
+.bank-balance-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-muted);
+}
+
+.bank-balance-value {
+  font-size: 1.6rem;
+  font-weight: 800;
+}
+
+.bank-balance-card.positive .bank-balance-value { color: var(--green); }
+.bank-balance-card.negative .bank-balance-value { color: var(--red); }
+.bank-loan-card .bank-balance-value { color: var(--red); }
+
+.bank-interest-note {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* Warning banner */
+.bank-warning {
+  padding: 0.75rem 1rem;
+  background: rgba(248,81,73,0.1);
+  border: 1px solid rgba(248,81,73,0.35);
+  border-radius: 8px;
+  font-size: 0.88rem;
+  color: #fca5a5;
+  line-height: 1.5;
+}
+
+/* Sections */
+.bank-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.bank-section-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.bank-section-desc {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* Loan offer cards */
+.bank-offers {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.75rem;
+}
+
+.bank-offer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  transition: border-color 0.15s;
+}
+
+.bank-offer:hover {
+  border-color: var(--accent);
+}
+
+.bank-offer-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.bank-offer-icon {
+  font-size: 1.5rem;
+}
+
+.bank-offer-name {
+  display: block;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.bank-offer-fee {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--red);
+}
+
+.bank-offer-amounts {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.bank-offer-row {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.btn-borrow {
+  background: linear-gradient(135deg, #f5a623, #e07b06);
+  color: #000;
+  border: none;
+  padding: 0.55rem 1rem;
+  border-radius: 7px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.12s;
+}
+
+.btn-borrow:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 14px rgba(245,166,35,0.4);
+}
+
+/* Repay grid */
+.bank-repay-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.btn-repay {
+  padding: 0.55rem 1.1rem;
+  background: var(--surface);
+  border: 1px solid rgba(63,185,80,0.5);
+  border-radius: 7px;
+  color: var(--green);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+}
+
+.btn-repay:hover:not(:disabled) {
+  background: rgba(63,185,80,0.12);
+  transform: translateY(-1px);
+}
+
+.btn-repay:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.btn-repay-all {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.btn-repay-all:hover:not(:disabled) {
+  background: rgba(245,166,35,0.1);
+}
+
+/* Utility colors used in bank */
+.green { color: var(--green); }
+.red   { color: var(--red);   }
+
+/* ── Quick gamble buttons ─────────────────── */
+
+.upgrades-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 0.75rem 0;
+}
+
+.gamble-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border-radius: 8px;
+  margin-bottom: 0.45rem;
+  cursor: pointer;
+  text-align: left;
+  color: var(--text);
+  transition: border-color 0.12s, background 0.12s;
+  border: 1px solid var(--border);
+  background: var(--bg);
+}
+
+.gamble-ready {
+  border-color: rgba(248,81,73,0.45);
+  background: rgba(248,81,73,0.05);
+}
+
+.gamble-ready:hover {
+  background: rgba(248,81,73,0.14);
+}
+
+.gamble-broke {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.gamble-win {
+  border-color: var(--green);
+  background: rgba(63,185,80,0.18);
+  animation: gamble-flash-win 0.25s ease;
+}
+
+.gamble-lose {
+  border-color: var(--red);
+  background: rgba(248,81,73,0.18);
+  animation: gamble-flash-lose 0.25s ease;
+}
+
+@keyframes gamble-flash-win {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.04); }
+  100% { transform: scale(1); }
+}
+
+@keyframes gamble-flash-lose {
+  0%   { transform: translateX(0); }
+  25%  { transform: translateX(-4px); }
+  75%  { transform: translateX(4px); }
+  100% { transform: translateX(0); }
+}
+
+.gamble-result-win {
+  color: var(--green);
+  font-size: 0.82rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.gamble-result-lose {
+  color: var(--red);
+  font-size: 0.82rem;
+  font-weight: 800;
+  white-space: nowrap;
+}

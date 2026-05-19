@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { saveScore, loadScore } from './firebase.js'
+import Casino from './Casino.jsx'
+import Bank from './Bank.jsx'
 
 const UPGRADES = [
   { id: 'cursor',  name: '🖱️ Cursor',   desc: '+1 cookie/sec',    baseCost: 50,    cps: 1    },
@@ -13,6 +15,15 @@ const UPGRADES = [
 function getUpgradeCost(upgrade, owned) {
   return Math.floor(upgrade.baseCost * Math.pow(1.15, owned))
 }
+
+const GAMBLES = [
+  { id: 'flip',   icon: '🪙', name: 'Pile ou Face', cost: 10,    chance: 0.45,  mult: 2,   desc: '45% de gagner ×2'      },
+  { id: 'five',   icon: '🎯', name: '1 sur 5',       cost: 100,   chance: 0.20,  mult: 4,   desc: '20% de gagner ×4'      },
+  { id: 'ten',    icon: '🎲', name: '1 sur 10',      cost: 500,   chance: 0.10,  mult: 8,   desc: '10% de gagner ×8'      },
+  { id: 'twenty', icon: '💥', name: '1 sur 20',      cost: 2000,  chance: 0.05,  mult: 16,  desc: '5% de gagner ×16'      },
+  { id: 'hundo',  icon: '🎰', name: '1 sur 100',     cost: 5000,  chance: 0.01,  mult: 75,  desc: '1% de gagner ×75'      },
+  { id: 'kilo',   icon: '👑', name: '1 sur 1000',    cost: 20000, chance: 0.001, mult: 750, desc: '0.1% de gagner ×750'   },
+]
 
 function fmt(n) {
   if (n >= 1e12) return (n / 1e12).toFixed(1) + 'T'
@@ -31,10 +42,14 @@ export default function Game({ user, onLogout }) {
   const [loaded, setLoaded]           = useState(false)
   const [saving, setSaving]           = useState(false)
   const [floats, setFloats]           = useState([])
+  const [tab, setTab]                 = useState('clicker')
+  const [loan, setLoan]               = useState(0)
+  const [gambleResults, setGambleResults] = useState({})
 
   const cookiesRef = useRef(0)
   const totalRef   = useRef(0)
   const ownedRef   = useRef({})
+  const loanRef    = useRef(0)
   const saveTimer  = useRef(null)
 
   const userId = user?.profile?.sub
@@ -43,6 +58,7 @@ export default function Game({ user, onLogout }) {
   useEffect(() => { cookiesRef.current = cookies }, [cookies])
   useEffect(() => { totalRef.current = totalCookies }, [totalCookies])
   useEffect(() => { ownedRef.current = owned }, [owned])
+  useEffect(() => { loanRef.current = loan }, [loan])
 
   // Load save from Firebase
   useEffect(() => {
@@ -53,6 +69,7 @@ export default function Game({ user, onLogout }) {
           setCookies(data.cookies ?? 0)
           setTotal(data.totalCookies ?? 0)
           setOwned(data.owned ?? {})
+          setLoan(data.loan ?? 0)
         }
       })
       .catch(console.error)
@@ -75,6 +92,20 @@ export default function Game({ user, onLogout }) {
     return () => clearInterval(interval)
   }, [cps, loaded])
 
+  // Loan interest: +1% every 30 seconds
+  useEffect(() => {
+    if (!loaded) return
+    const interval = setInterval(() => {
+      setLoan(l => {
+        if (l <= 0) return l
+        const newLoan = Math.ceil(l * 1.01)
+        loanRef.current = newLoan
+        return newLoan
+      })
+    }, 30000)
+    return () => clearInterval(interval)
+  }, [loaded])
+
   const scheduleSave = () => {
     if (!userId) return
     if (saveTimer.current) clearTimeout(saveTimer.current)
@@ -85,6 +116,7 @@ export default function Game({ user, onLogout }) {
           cookies: cookiesRef.current,
           totalCookies: totalRef.current,
           owned: ownedRef.current,
+          loan: loanRef.current,
           savedAt: new Date().toISOString(),
         })
       } catch (e) {
@@ -121,6 +153,38 @@ export default function Game({ user, onLogout }) {
     scheduleSave()
   }
 
+  const handleCasinoResult = (delta) => {
+    setCookies(c => c + delta)
+    scheduleSave()
+  }
+
+  const handleBorrow = (amount, totalOwed) => {
+    setCookies(c => c + amount)
+    setLoan(l => l + totalOwed)
+    scheduleSave()
+  }
+
+  const handleRepay = (amount) => {
+    const repay = Math.min(amount, loan)
+    setCookies(c => c - repay)
+    setLoan(l => Math.max(0, l - repay))
+    scheduleSave()
+  }
+
+  const handleGamble = (gamble) => {
+    if (cookies < gamble.cost) return
+    const win = Math.random() < gamble.chance
+    if (win) {
+      const gain = Math.floor(gamble.cost * gamble.mult)
+      setCookies(c => c - gamble.cost + gain)
+    } else {
+      setCookies(c => c - gamble.cost)
+    }
+    setGambleResults(r => ({ ...r, [gamble.id]: win ? 'win' : 'lose' }))
+    setTimeout(() => setGambleResults(r => { const n = { ...r }; delete n[gamble.id]; return n }), 1600)
+    scheduleSave()
+  }
+
   if (!loaded) {
     return (
       <div className="centered">
@@ -145,18 +209,38 @@ export default function Game({ user, onLogout }) {
         <button className="btn-logout" onClick={onLogout}>Déconnexion</button>
       </header>
 
+      {/* Top tabs */}
+      <nav className="game-tabs">
+        <button className={`game-tab ${tab === 'clicker' ? 'active' : ''}`} onClick={() => setTab('clicker')}>
+          🍪 Clicker
+        </button>
+        <button className={`game-tab ${tab === 'casino' ? 'active' : ''}`} onClick={() => setTab('casino')}>
+          🎰 Casino
+        </button>
+        <button className={`game-tab ${tab === 'bank' ? 'active' : ''}`} onClick={() => setTab('bank')}>
+          🏦 Banque{loan > 0 ? <span className="tab-debt-badge"> !</span> : null}
+        </button>
+      </nav>
+
       <main className="game-main">
-        {/* Cookie zone */}
-        <section className="cookie-zone">
+        {tab === 'clicker' ? (
+          /* Cookie zone */
+          <section className="cookie-zone">
           <div className="stats">
             <div className="stat">
-              <span className="stat-value">{fmt(cookies)}</span>
-              <span className="stat-label">cookies</span>
+              <span className={`stat-value ${cookies < 0 ? 'stat-debt' : ''}`}>{cookies < 0 ? '−' : ''}{fmt(Math.abs(cookies))}</span>
+              <span className="stat-label">{cookies < 0 ? '🔴 dette' : 'cookies'}</span>
             </div>
             {cps > 0 && (
               <div className="stat">
                 <span className="stat-value">{fmt(cps)}</span>
                 <span className="stat-label">par seconde</span>
+              </div>
+            )}
+            {loan > 0 && (
+              <div className="stat">
+                <span className="stat-value stat-debt">{fmt(loan)}</span>
+                <span className="stat-label">💸 emprunt</span>
               </div>
             )}
           </div>
@@ -178,6 +262,11 @@ export default function Game({ user, onLogout }) {
 
           <p className="total-label">Total cuit : {fmt(totalCookies)} cookies</p>
         </section>
+        ) : tab === 'casino' ? (
+          <Casino cookies={cookies} onResult={handleCasinoResult} />
+        ) : (
+          <Bank cookies={cookies} loan={loan} onBorrow={handleBorrow} onRepay={handleRepay} />
+        )}
 
         {/* Upgrades panel */}
         <aside className="upgrades">
@@ -201,6 +290,39 @@ export default function Game({ user, onLogout }) {
                 <div className="upgrade-meta">
                   <span className="upgrade-cost">{fmt(cost)} 🍪</span>
                   {count > 0 && <span className="upgrade-count">×{count}</span>}
+                </div>
+              </button>
+            )
+          })}
+
+          <div className="upgrades-divider" />
+          <h2 className="upgrades-title">Paris rapides</h2>
+          {GAMBLES.map(gamble => {
+            const canAfford = cookies >= gamble.cost
+            const result    = gambleResults[gamble.id]
+            return (
+              <button
+                key={gamble.id}
+                className={`gamble-item ${
+                  result === 'win' ? 'gamble-win'
+                  : result === 'lose' ? 'gamble-lose'
+                  : canAfford ? 'gamble-ready' : 'gamble-broke'
+                }`}
+                onClick={() => handleGamble(gamble)}
+                disabled={!canAfford}
+              >
+                <span className="upgrade-icon">{gamble.icon}</span>
+                <div className="upgrade-info">
+                  <span className="upgrade-name">{gamble.name}</span>
+                  <span className="upgrade-desc">{gamble.desc}</span>
+                </div>
+                <div className="upgrade-meta">
+                  {result === 'win'
+                    ? <span className="gamble-result-win">+{fmt(Math.floor(gamble.cost * (gamble.mult - 1)))} 🍪</span>
+                    : result === 'lose'
+                    ? <span className="gamble-result-lose">−{fmt(gamble.cost)} 🍪</span>
+                    : <span className="upgrade-cost">{fmt(gamble.cost)} 🍪</span>
+                  }
                 </div>
               </button>
             )
