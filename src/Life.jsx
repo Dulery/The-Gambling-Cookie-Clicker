@@ -27,28 +27,28 @@ export const ASSETS = [
 // ── Shop items (resale = 60 % of cost) ───────────────────────────────────────
 
 export const SHOP_ITEMS = [
-  { id: 'pizza',   name: 'Pizza',       icon: '🍕', cost: 50,     desc: 'Délicieuse',      mentalBoost: 3  },
-  { id: 'biere',   name: 'Bière',       icon: '🍺', cost: 20,     desc: 'Bien fraîche',    mentalBoost: 5  },
-  { id: 'chat',    name: 'Chat',        icon: '🐱', cost: 150,    desc: 'Miaou',           mentalBoost: 12 },
-  { id: 'tv',      name: 'Télévision',  icon: '📺', cost: 300,    desc: 'HD 4K',           mentalBoost: 5  },
-  { id: 'velo',    name: 'Vélo',        icon: '🚲', cost: 500,    desc: 'Pour se balader', mentalBoost: 7  },
-  { id: 'phone',   name: 'Smartphone',  icon: '📱', cost: 800,    desc: 'Dernier modèle',  mentalBoost: 5  },
-  { id: 'laptop',  name: 'PC Portable', icon: '💻', cost: 1500,   desc: 'Ultra-puissant',  mentalBoost: 6  },
-  { id: 'sword',   name: 'Épée',        icon: '⚔️', cost: 2000,   desc: 'Tranchante',      mentalBoost: 4  },
-  { id: 'moto',    name: 'Moto',        icon: '🏍️', cost: 5000,   desc: 'Vroooom',         mentalBoost: 10 },
-  { id: 'crown',   name: 'Couronne',    icon: '👑', cost: 10000,  desc: 'Royale',          mentalBoost: 12 },
-  { id: 'ferrari', name: 'Ferrari',     icon: '🏎️', cost: 30000,  desc: 'Vroom vroom',     mentalBoost: 18 },
-  { id: 'yacht',   name: 'Yacht',       icon: '🛥️', cost: 75000,  desc: 'En mer',          mentalBoost: 20 },
-  { id: 'villa',   name: 'Villa',       icon: '🏡', cost: 120000, desc: 'Piscine incluse', mentalBoost: 22 },
-  { id: 'avion',   name: 'Jet privé',   icon: '✈️', cost: 300000, desc: 'Business class',  mentalBoost: 25 },
-  { id: 'rocket',  name: 'Fusée',       icon: '🚀', cost: 500000, desc: "Pour l'espace",   mentalBoost: 30 },
-  { id: 'island',  name: 'Île privée',  icon: '🏝️', cost: 999999, desc: 'Paradisiaque',    mentalBoost: 35 },
+  { id: 'pizza',   name: 'Pizza',       icon: '🍕', cost: 50,     desc: 'Délicieuse',      mentalBoost: 1  },
+  { id: 'biere',   name: 'Bière',       icon: '🍺', cost: 20,     desc: 'Bien fraîche',    mentalBoost: 1  },
+  { id: 'chat',    name: 'Chat',        icon: '🐱', cost: 150,    desc: 'Miaou',           mentalBoost: 2  },
+  { id: 'tv',      name: 'Télévision',  icon: '📺', cost: 300,    desc: 'HD 4K',           mentalBoost: 1  },
+  { id: 'velo',    name: 'Vélo',        icon: '🚲', cost: 500,    desc: 'Pour se balader', mentalBoost: 1  },
+  { id: 'phone',   name: 'Smartphone',  icon: '📱', cost: 800,    desc: 'Dernier modèle',  mentalBoost: 1  },
+  { id: 'laptop',  name: 'PC Portable', icon: '💻', cost: 1500,   desc: 'Ultra-puissant',  mentalBoost: 1  },
+  { id: 'sword',   name: 'Épée',        icon: '⚔️', cost: 2000,   desc: 'Tranchante',      mentalBoost: 1  },
+  { id: 'moto',    name: 'Moto',        icon: '🏍️', cost: 5000,   desc: 'Vroooom',         mentalBoost: 2  },
+  { id: 'crown',   name: 'Couronne',    icon: '👑', cost: 10000,  desc: 'Royale',          mentalBoost: 2  },
+  { id: 'ferrari', name: 'Ferrari',     icon: '🏎️', cost: 30000,  desc: 'Vroom vroom',     mentalBoost: 3  },
+  { id: 'yacht',   name: 'Yacht',       icon: '🛥️', cost: 75000,  desc: 'En mer',          mentalBoost: 3  },
+  { id: 'villa',   name: 'Villa',       icon: '🏡', cost: 120000, desc: 'Piscine incluse', mentalBoost: 4  },
+  { id: 'avion',   name: 'Jet privé',   icon: '✈️', cost: 300000, desc: 'Business class',  mentalBoost: 4  },
+  { id: 'rocket',  name: 'Fusée',       icon: '🚀', cost: 500000, desc: "Pour l'espace",   mentalBoost: 5  },
+  { id: 'island',  name: 'Île privée',  icon: '🏝️', cost: 999999, desc: 'Paradisiaque',    mentalBoost: 6  },
 ].map(item => ({ ...item, price: Math.floor(item.cost * 0.6) }))
 export const MEDICINES = [
-  { id: 'aspirine',  name: 'Aspirine',           icon: '💊', cost: 1000,   mentalBoost: 10,  consumable: true, desc: 'Soulage un peu'          },
-  { id: 'prozac',    name: 'Antidépresseurs',     icon: '💊', cost: 8000,   mentalBoost: 25,  consumable: true, desc: 'Remonte le moral'         },
-  { id: 'therapie',  name: 'Séance de thérapie',  icon: '🛋️', cost: 25000,  mentalBoost: 50,  consumable: true, desc: 'Parler ça aide'          },
-  { id: 'traitement',name: 'Traitement complet',  icon: '💉', cost: 80000,  mentalBoost: 100, consumable: true, desc: 'Santé mentale à 100 %'   },
+  { id: 'aspirine',  name: 'Aspirine',           icon: '💊', cost: 4000,   mentalBoost: 8,   consumable: true, desc: 'Soulage un peu'          },
+  { id: 'prozac',    name: 'Antidépresseurs',     icon: '💊', cost: 25000,  mentalBoost: 20,  consumable: true, desc: 'Remonte le moral'         },
+  { id: 'therapie',  name: 'Séance de thérapie',  icon: '🛋️', cost: 80000,  mentalBoost: 40,  consumable: true, desc: 'Parler ça aide'          },
+  { id: 'traitement',name: 'Traitement complet',  icon: '💉', cost: 250000, mentalBoost: 75,  consumable: true, desc: 'Partiellement rétabli'    },
 ]
 const SHOP_MAP = Object.fromEntries(SHOP_ITEMS.map(i => [i.id, i]))
 

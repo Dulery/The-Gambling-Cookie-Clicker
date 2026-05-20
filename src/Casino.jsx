@@ -30,14 +30,13 @@ function spinReel() {
 function getMultiplier(reels) {
   const [a, b, c] = reels
   if (a === b && b === c) {
-    if (a === '👑') return 25
-    if (a === '💎') return 12
-    if (a === '🎲') return 6
-    if (a === '🔔') return 4
-    if (a === '🍋') return 3
-    return 2.5
+    if (a === '👑') return 18
+    if (a === '💎') return 8
+    if (a === '🎲') return 5
+    if (a === '🔔') return 3
+    if (a === '🍋') return 2
+    return 1.5
   }
-  if (a === b || b === c || a === c) return 1.5
   return 0
 }
 
@@ -73,7 +72,7 @@ function SlotMachine({ cookies, onResult, onMentalChange }) {
         if (mult > 0) {
           const gain = Math.floor(bet * mult)
           onResult(gain)
-          onMentalChange(5)
+          onMentalChange(2)
           setMsg({ text: `+${fmt(gain)} 🍪  (×${mult})`, win: true })
         } else {
           onMentalChange(-5)
@@ -108,10 +107,9 @@ function SlotMachine({ cookies, onResult, onMentalChange }) {
       </div>
 
       <div className="slot-payouts">
-        <span>👑×3 = ×25</span><span>💎×3 = ×12</span>
-        <span>🎲×3 = ×6</span><span>🔔×3 = ×4</span>
-        <span>🍋×3 = ×3</span><span>🍪×3 = ×2.5</span>
-        <span style={{ gridColumn: '1/-1' }}>Paire = ×1.5</span>
+        <span>👑×3 = ×18</span><span>💎×3 = ×8</span>
+        <span>🎲×3 = ×5</span><span>🔔×3 = ×3</span>
+        <span>🍋×3 = ×2</span><span>🍪×3 = ×1.5</span>
       </div>
 
       <button
@@ -210,9 +208,9 @@ function Blackjack({ cookies, onResult, onMentalChange }) {
     setOutcome(null)
     if (total(p) === 21) {
       setPhase('done')
-      const gain = Math.floor(bet * 2.5)
+      const gain = Math.floor(bet * 2.2)
       onResult(gain)
-      onMentalChange(12)
+      onMentalChange(4)
       setOutcome('bj')
     } else {
       setPhase('playing')
@@ -248,8 +246,8 @@ function Blackjack({ cookies, onResult, onMentalChange }) {
       setPhase('done')
       const pv = total(currentPlayer)
       const dv = total(d)
-      if (dv > 21 || pv > dv)  { onResult(bet * 2); onMentalChange(8);  setOutcome('win')  }
-      else if (pv === dv)       { onResult(bet);     onMentalChange(3);  setOutcome('push') }
+      if (dv > 21 || pv > dv)  { onResult(bet * 2); onMentalChange(3);  setOutcome('win')  }
+      else if (pv === dv)       { onResult(bet);     onMentalChange(1);  setOutcome('push') }
       else                      { onMentalChange(-8);                    setOutcome('lose') }
     }
     runDealer()
@@ -270,7 +268,7 @@ function Blackjack({ cookies, onResult, onMentalChange }) {
   const reset = () => { setPhase('idle'); setOutcome(null); setPlayer([]); setDealer([]) }
 
   const OUTCOME_LABEL = {
-    bj:   '🎉 Blackjack ! ×2.5',
+    bj:   '🎉 Blackjack ! ×2.2',
     win:  '✅ Gagné ! ×2',
     lose: '❌ Perdu',
     push: '🤝 Égalité — remboursé',
@@ -319,7 +317,7 @@ function Blackjack({ cookies, onResult, onMentalChange }) {
             🃏 Distribuer ({fmt(bet)} 🍪)
           </button>
           <div className="bj-rules">
-            Blackjack paie ×2.5 · Victoire ×2 · Double disponible en 2 cartes
+            Blackjack paie ×2.2 · Victoire ×2 · Double disponible en 2 cartes
           </div>
         </>
       )}
@@ -351,18 +349,18 @@ function Blackjack({ cookies, onResult, onMentalChange }) {
 // win: true  → return bet × mult (net gain = bet × (mult-1))
 // win: false → lose bet × mult total (after bet already deducted, adjust by bet×(1-mult))
 const WHEEL_SEGS = [
-  { icon: '🍋', label: '×1.5',  win: true,  mult: 1.5, color: '#a16207', textColor: '#fff', weight: 6 },
-  { icon: '😅', label: '-½×',   win: false, mult: 0.5, color: '#92400e', textColor: '#fed7aa', weight: 6 },
-  { icon: '🍪', label: '×2',    win: true,  mult: 2,   color: '#15803d', textColor: '#fff', weight: 5 },
-  { icon: '💸', label: '-1×',   win: false, mult: 1,   color: '#991b1b', textColor: '#fff', weight: 5 },
-  { icon: '🔔', label: '×3',    win: true,  mult: 3,   color: '#c2410c', textColor: '#fff', weight: 4 },
-  { icon: '😬', label: '-1.5×', win: false, mult: 1.5, color: '#7f1d1d', textColor: '#fca5a5', weight: 4 },
-  { icon: '💎', label: '×5',    win: true,  mult: 5,   color: '#1d4ed8', textColor: '#fff', weight: 3 },
-  { icon: '💀', label: '-2×',   win: false, mult: 2,   color: '#450a0a', textColor: '#ef4444', weight: 3 },
-  { icon: '⭐', label: '×10',   win: true,  mult: 10,  color: '#6d28d9', textColor: '#fff', weight: 2 },
-  { icon: '☠️', label: '-3×',   win: false, mult: 3,   color: '#1c0000', textColor: '#f87171', weight: 2 },
-  { icon: '👑', label: '×25',   win: true,  mult: 25,  color: '#d97706', textColor: '#000', weight: 1 },
-  { icon: '🔥', label: '-5×',   win: false, mult: 5,   color: '#0d0000', textColor: '#fca5a5', weight: 1 },
+  { icon: '🍋', label: '×1.2',  win: true,  mult: 1.2, color: '#a16207', textColor: '#fff', weight: 5 },
+  { icon: '😅', label: '-½×',   win: false, mult: 0.5, color: '#92400e', textColor: '#fed7aa', weight: 7 },
+  { icon: '🍪', label: '×1.7',  win: true,  mult: 1.7, color: '#15803d', textColor: '#fff', weight: 4 },
+  { icon: '💸', label: '-1×',   win: false, mult: 1,   color: '#991b1b', textColor: '#fff', weight: 6 },
+  { icon: '🔔', label: '×2.5',  win: true,  mult: 2.5, color: '#c2410c', textColor: '#fff', weight: 3 },
+  { icon: '😬', label: '-1.5×', win: false, mult: 1.5, color: '#7f1d1d', textColor: '#fca5a5', weight: 5 },
+  { icon: '💎', label: '×4',    win: true,  mult: 4,   color: '#1d4ed8', textColor: '#fff', weight: 2 },
+  { icon: '💀', label: '-2×',   win: false, mult: 2,   color: '#450a0a', textColor: '#ef4444', weight: 4 },
+  { icon: '⭐', label: '×8',    win: true,  mult: 8,   color: '#6d28d9', textColor: '#fff', weight: 1 },
+  { icon: '☠️', label: '-3×',   win: false, mult: 3,   color: '#1c0000', textColor: '#f87171', weight: 3 },
+  { icon: '👑', label: '×18',   win: true,  mult: 18,  color: '#d97706', textColor: '#000', weight: 1 },
+  { icon: '🔥', label: '-5×',   win: false, mult: 5,   color: '#0d0000', textColor: '#fca5a5', weight: 2 },
 ]
 
 const W_N   = WHEEL_SEGS.length     // 12 segments
@@ -432,7 +430,7 @@ function Wheel({ cookies, onResult, onMentalChange }) {
       if (seg.win) {
         // Return winnings (bet already deducted)
         onResult(Math.floor(bet * seg.mult))
-        onMentalChange(5)
+        onMentalChange(2)
       } else {
         // Total loss = bet × mult. Already deducted bet, so adjust the remainder:
         // mult < 1 → partial refund; mult > 1 → extra loss

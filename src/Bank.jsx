@@ -10,10 +10,10 @@ function fmt(n) {
 }
 
 const LOAN_OFFERS = [
-  { id: 'micro',    label: 'Micro-prêt',    icon: '🪙', amount: 500,   fee: 0.20 },
-  { id: 'standard', label: 'Prêt Standard', icon: '💳', amount: 2000,  fee: 0.25 },
-  { id: 'grand',    label: 'Grand Prêt',    icon: '💰', amount: 10000, fee: 0.35 },
-  { id: 'mega',     label: 'Méga Prêt',     icon: '🏛️', amount: 50000, fee: 0.50 },
+  { id: 'micro',    label: 'Micro-prêt',    icon: '🪙', amount: 500,   fee: 0.40 },
+  { id: 'standard', label: 'Prêt Standard', icon: '💳', amount: 2000,  fee: 0.65 },
+  { id: 'grand',    label: 'Grand Prêt',    icon: '💰', amount: 10000, fee: 1.00 },
+  { id: 'mega',     label: 'Méga Prêt',     icon: '🏛️', amount: 50000, fee: 1.80 },
 ]
 
 const REPAY_AMOUNTS = [100, 500, 2000, 10000]

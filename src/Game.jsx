@@ -5,25 +5,25 @@ import Bank from './Bank.jsx'
 import Life, { getDefaultAssets } from './Life.jsx'
 
 const UPGRADES = [
-  { id: 'cursor',  name: '🖱️ Cursor',   desc: '+1 cookie/sec',    baseCost: 50,    cps: 1    },
-  { id: 'grandma', name: '👵 Mamie',    desc: '+5 cookies/sec',   baseCost: 200,   cps: 5    },
-  { id: 'farm',    name: '🌾 Ferme',    desc: '+20 cookies/sec',  baseCost: 800,   cps: 20   },
-  { id: 'mine',    name: '⛏️ Mine',     desc: '+100 cookies/sec', baseCost: 3000,  cps: 100  },
-  { id: 'factory', name: '🏭 Usine',    desc: '+500 cookies/sec', baseCost: 12000, cps: 500  },
-  { id: 'portal',  name: '🌀 Portail',  desc: '+2k cookies/sec',  baseCost: 50000, cps: 2000 },
+  { id: 'cursor',  name: '🖱️ Cursor',   desc: '+1 cookie/sec',    baseCost: 150,    cps: 1    },
+  { id: 'grandma', name: '👵 Mamie',    desc: '+5 cookies/sec',   baseCost: 600,    cps: 5    },
+  { id: 'farm',    name: '🌾 Ferme',    desc: '+20 cookies/sec',  baseCost: 2500,   cps: 20   },
+  { id: 'mine',    name: '⛏️ Mine',     desc: '+100 cookies/sec', baseCost: 10000,  cps: 100  },
+  { id: 'factory', name: '🏭 Usine',    desc: '+500 cookies/sec', baseCost: 40000,  cps: 500  },
+  { id: 'portal',  name: '🌀 Portail',  desc: '+2k cookies/sec',  baseCost: 200000, cps: 2000 },
 ]
 
 function getUpgradeCost(upgrade, owned) {
-  return Math.floor(upgrade.baseCost * Math.pow(1.15, owned))
+  return Math.floor(upgrade.baseCost * Math.pow(1.20, owned))
 }
 
 const GAMBLES = [
-  { id: 'flip',   icon: '🪙', name: 'Pile ou Face', cost: 10,    chance: 0.45,  mult: 2,   desc: '45% de gagner ×2',    mental: 2  },
-  { id: 'five',   icon: '🎯', name: '1 sur 5',       cost: 100,   chance: 0.20,  mult: 4,   desc: '20% de gagner ×4',    mental: 4  },
-  { id: 'ten',    icon: '🏂', name: '1 sur 10',      cost: 500,   chance: 0.10,  mult: 8,   desc: '10% de gagner ×8',    mental: 5  },
-  { id: 'twenty', icon: '💥', name: '1 sur 20',      cost: 2000,  chance: 0.05,  mult: 16,  desc: '5% de gagner ×16',   mental: 7  },
-  { id: 'hundo',  icon: '🎰', name: '1 sur 100',     cost: 5000,  chance: 0.01,  mult: 75,  desc: '1% de gagner ×75',   mental: 10 },
-  { id: 'kilo',   icon: '👑', name: '1 sur 1000',    cost: 20000, chance: 0.001, mult: 750, desc: '0.1% de gagner ×750', mental: 15 },
+  { id: 'flip',   icon: '🪙', name: 'Pile ou Face', cost: 25,     chance: 0.40,   mult: 2,   desc: '40% de gagner ×2',      mental: 1  },
+  { id: 'five',   icon: '🎯', name: '1 sur 5',       cost: 300,    chance: 0.16,   mult: 4,   desc: '16% de gagner ×4',      mental: 1  },
+  { id: 'ten',    icon: '🏂', name: '1 sur 10',      cost: 1500,   chance: 0.08,   mult: 7,   desc: '8% de gagner ×7',       mental: 2  },
+  { id: 'twenty', icon: '💥', name: '1 sur 20',      cost: 8000,   chance: 0.04,   mult: 14,  desc: '4% de gagner ×14',      mental: 2  },
+  { id: 'hundo',  icon: '🎰', name: '1 sur 100',     cost: 25000,  chance: 0.008,  mult: 60,  desc: '0.8% de gagner ×60',    mental: 3  },
+  { id: 'kilo',   icon: '👑', name: '1 sur 1000',    cost: 100000, chance: 0.0007, mult: 600, desc: '0.07% de gagner ×600',  mental: 5  },
 ]
 
 function fmt(n) {
@@ -44,7 +44,7 @@ export default function Game({ user, onLogout }) {
   const [saving, setSaving]           = useState(false)
   const [floats, setFloats]           = useState([])
   const [tab, setTab]                 = useState('clicker')
-  const [loan, setLoan]               = useState(0)
+  const [loan, setLoan]               = useState(50000)
   const [gambleResults, setGambleResults] = useState({})
   const [assets, setAssets]           = useState(getDefaultAssets)
   const [dead, setDead]               = useState(false)
@@ -78,7 +78,7 @@ export default function Game({ user, onLogout }) {
           setCookies(data.cookies ?? 0)
           setTotal(data.totalCookies ?? 0)
           setOwned(data.owned ?? {})
-          setLoan(data.loan ?? 0)
+          setLoan(data.loan ?? 50000)
           setAssets({ ...getDefaultAssets(), ...(data.assets ?? {}) })
           setMentalHealth(data.mentalHealth ?? 100)
         }
@@ -103,21 +103,21 @@ export default function Game({ user, onLogout }) {
     return () => clearInterval(interval)
   }, [cps, loaded])
 
-  // Loan interest: +1% every 30 seconds
+  // Loan interest: +2% every 20 seconds
   useEffect(() => {
     if (!loaded) return
     const interval = setInterval(() => {
       setLoan(l => {
         if (l <= 0) return l
-        const newLoan = Math.ceil(l * 1.01)
+        const newLoan = Math.ceil(l * 1.02)
         loanRef.current = newLoan
         return newLoan
       })
-    }, 30000)
+    }, 20000)
     return () => clearInterval(interval)
   }, [loaded])
 
-  // Mental health passive regen: +1 every 20s
+  // Mental health passive regen: +1 every 60s
   useEffect(() => {
     if (!loaded) return
     const interval = setInterval(() => {
@@ -126,7 +126,7 @@ export default function Game({ user, onLogout }) {
         mentalRef.current = next
         return next
       })
-    }, 20000)
+    }, 60000)
     return () => clearInterval(interval)
   }, [loaded])
 
@@ -223,13 +223,13 @@ export default function Game({ user, onLogout }) {
     setCookies(0)
     setTotal(0)
     setOwned({})
-    setLoan(0)
+    setLoan(50000)
     setAssets(getDefaultAssets())
     setMentalHealth(100)
     setDead(true)
     if (userId) {
       saveScore(userId, {
-        cookies: 0, totalCookies: 0, owned: {}, loan: 0,
+        cookies: 0, totalCookies: 0, owned: {}, loan: 50000,
         assets: getDefaultAssets(), mentalHealth: 100,
         savedAt: new Date().toISOString(),
       }).catch(console.error)
