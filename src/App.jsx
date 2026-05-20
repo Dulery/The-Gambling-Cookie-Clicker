@@ -31,7 +31,7 @@ export default function App() {
     return (
       <div className="centered login-page">
         <div className="cookie-logo">🍪</div>
-        <h1>Cookie Clicker</h1>
+        <h1>Gambling Cookie Clicker</h1>
         <p>Connectez-vous pour sauvegarder votre progression</p>
         <button className="btn-primary" onClick={() => auth.signinRedirect()}>
           Se connecter
