@@ -41,7 +41,7 @@ function getMultiplier(reels) {
   return 0
 }
 
-function SlotMachine({ cookies, onResult }) {
+function SlotMachine({ cookies, onResult, onMentalChange }) {
   const [reels, setReels]     = useState(['🍪', '🍪', '🍪'])
   const [spinning, setSpinning] = useState(false)
   const [bet, setBet]         = useState(50)
@@ -73,8 +73,10 @@ function SlotMachine({ cookies, onResult }) {
         if (mult > 0) {
           const gain = Math.floor(bet * mult)
           onResult(gain)
+          onMentalChange(5)
           setMsg({ text: `+${fmt(gain)} 🍪  (×${mult})`, win: true })
         } else {
+          onMentalChange(-5)
           setMsg({ text: `Perdu ! -${fmt(bet)} 🍪`, win: false })
         }
       }
@@ -180,7 +182,7 @@ function Hand({ cards, hideSecond = false }) {
   )
 }
 
-function Blackjack({ cookies, onResult }) {
+function Blackjack({ cookies, onResult, onMentalChange }) {
   const [deck,    setDeck]    = useState([])
   const [player,  setPlayer]  = useState([])
   const [dealer,  setDealer]  = useState([])
@@ -210,6 +212,7 @@ function Blackjack({ cookies, onResult }) {
       setPhase('done')
       const gain = Math.floor(bet * 2.5)
       onResult(gain)
+      onMentalChange(12)
       setOutcome('bj')
     } else {
       setPhase('playing')
@@ -245,9 +248,9 @@ function Blackjack({ cookies, onResult }) {
       setPhase('done')
       const pv = total(currentPlayer)
       const dv = total(d)
-      if (dv > 21 || pv > dv)  { onResult(bet * 2); setOutcome('win')  }
-      else if (pv === dv)       { onResult(bet);     setOutcome('push') }
-      else                      {                    setOutcome('lose') }
+      if (dv > 21 || pv > dv)  { onResult(bet * 2); onMentalChange(8);  setOutcome('win')  }
+      else if (pv === dv)       { onResult(bet);     onMentalChange(3);  setOutcome('push') }
+      else                      { onMentalChange(-8);                    setOutcome('lose') }
     }
     runDealer()
   }
@@ -378,7 +381,7 @@ function wSlice(startDeg, endDeg) {
   return `M ${W_CX} ${W_CY} L ${x1.toFixed(2)} ${y1.toFixed(2)} A ${W_R} ${W_R} 0 0 1 ${x2.toFixed(2)} ${y2.toFixed(2)} Z`
 }
 
-function Wheel({ cookies, onResult }) {
+function Wheel({ cookies, onResult, onMentalChange }) {
   const [rotation, setRotation] = useState(0)
   const [pending,  setPending]  = useState(null)   // target rotation, applied after transition is enabled
   const [spinning, setSpinning] = useState(false)
@@ -429,11 +432,13 @@ function Wheel({ cookies, onResult }) {
       if (seg.win) {
         // Return winnings (bet already deducted)
         onResult(Math.floor(bet * seg.mult))
+        onMentalChange(5)
       } else {
         // Total loss = bet × mult. Already deducted bet, so adjust the remainder:
         // mult < 1 → partial refund; mult > 1 → extra loss
         const adjust = Math.floor(bet * (1 - seg.mult))
         if (adjust !== 0) onResult(adjust)
+        onMentalChange(-5)
       }
       setResult({ ...seg, betAmount: bet })
       setSpinning(false)
@@ -517,7 +522,7 @@ function Wheel({ cookies, onResult }) {
 
 // ── Casino wrapper ────────────────────────────────────────────────────────────
 
-export default function Casino({ cookies, onResult }) {
+export default function Casino({ cookies, onResult, onMentalChange }) {
   const [tab, setTab] = useState('slots')
 
   return (
@@ -528,9 +533,9 @@ export default function Casino({ cookies, onResult }) {
         <button className={`casino-tab ${tab === 'blackjack' ? 'active' : ''}`} onClick={() => setTab('blackjack')}>🃏 Blackjack</button>
       </div>
 
-      {tab === 'slots'     && <SlotMachine cookies={cookies} onResult={onResult} />}
-      {tab === 'wheel'     && <Wheel       cookies={cookies} onResult={onResult} />}
-      {tab === 'blackjack' && <Blackjack   cookies={cookies} onResult={onResult} />}
+      {tab === 'slots'     && <SlotMachine cookies={cookies} onResult={onResult} onMentalChange={onMentalChange} />}
+      {tab === 'wheel'     && <Wheel       cookies={cookies} onResult={onResult} onMentalChange={onMentalChange} />}
+      {tab === 'blackjack' && <Blackjack   cookies={cookies} onResult={onResult} onMentalChange={onMentalChange} />}
     </div>
   )
 }

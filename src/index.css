@@ -1269,6 +1269,33 @@ body {
   cursor: not-allowed;
 }
 
+.shop-medicine {
+  border-color: rgba(59,130,246,0.35) !important;
+}
+.shop-medicine.shop-affordable {
+  border-color: rgba(59,130,246,0.6) !important;
+  background: rgba(59,130,246,0.04);
+}
+.shop-medicine.shop-affordable:hover {
+  border-color: #3b82f6 !important;
+  background: rgba(59,130,246,0.1);
+}
+
+.mental-boost-badge {
+  background: rgba(59,130,246,0.2);
+  color: #93c5fd;
+  padding: 0.1rem 0.45rem;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.btn-buy-med {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+  color: #fff !important;
+}
+
 /* Inventaire */
 
 .inv-empty {
@@ -1313,6 +1340,52 @@ body {
   border-radius: 4px;
   font-size: 0.72rem;
   font-weight: 800;
+}
+
+/* ── Mental health bar ─────────────────── */
+
+.mental-bar-container {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.4rem 1.5rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.mental-label {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  min-width: 130px;
+}
+
+.mental-bar-track {
+  flex: 1;
+  height: 7px;
+  background: var(--bg);
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.mental-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.6s ease, background-color 0.6s ease;
+}
+
+.mental-good { background: var(--green); }
+.mental-mid  { background: var(--accent); }
+.mental-bad  { background: var(--red);   }
+
+.mental-pct {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  min-width: 36px;
+  text-align: right;
 }
 
 /* ── Fatal organ styles ────────────────── */

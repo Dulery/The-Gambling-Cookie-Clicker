@@ -18,12 +18,12 @@ function getUpgradeCost(upgrade, owned) {
 }
 
 const GAMBLES = [
-  { id: 'flip',   icon: '🪙', name: 'Pile ou Face', cost: 10,    chance: 0.45,  mult: 2,   desc: '45% de gagner ×2'      },
-  { id: 'five',   icon: '🎯', name: '1 sur 5',       cost: 100,   chance: 0.20,  mult: 4,   desc: '20% de gagner ×4'      },
-  { id: 'ten',    icon: '🎲', name: '1 sur 10',      cost: 500,   chance: 0.10,  mult: 8,   desc: '10% de gagner ×8'      },
-  { id: 'twenty', icon: '💥', name: '1 sur 20',      cost: 2000,  chance: 0.05,  mult: 16,  desc: '5% de gagner ×16'      },
-  { id: 'hundo',  icon: '🎰', name: '1 sur 100',     cost: 5000,  chance: 0.01,  mult: 75,  desc: '1% de gagner ×75'      },
-  { id: 'kilo',   icon: '👑', name: '1 sur 1000',    cost: 20000, chance: 0.001, mult: 750, desc: '0.1% de gagner ×750'   },
+  { id: 'flip',   icon: '🪙', name: 'Pile ou Face', cost: 10,    chance: 0.45,  mult: 2,   desc: '45% de gagner ×2',    mental: 2  },
+  { id: 'five',   icon: '🎯', name: '1 sur 5',       cost: 100,   chance: 0.20,  mult: 4,   desc: '20% de gagner ×4',    mental: 4  },
+  { id: 'ten',    icon: '🏂', name: '1 sur 10',      cost: 500,   chance: 0.10,  mult: 8,   desc: '10% de gagner ×8',    mental: 5  },
+  { id: 'twenty', icon: '💥', name: '1 sur 20',      cost: 2000,  chance: 0.05,  mult: 16,  desc: '5% de gagner ×16',   mental: 7  },
+  { id: 'hundo',  icon: '🎰', name: '1 sur 100',     cost: 5000,  chance: 0.01,  mult: 75,  desc: '1% de gagner ×75',   mental: 10 },
+  { id: 'kilo',   icon: '👑', name: '1 sur 1000',    cost: 20000, chance: 0.001, mult: 750, desc: '0.1% de gagner ×750', mental: 15 },
 ]
 
 function fmt(n) {
@@ -49,13 +49,15 @@ export default function Game({ user, onLogout }) {
   const [assets, setAssets]           = useState(getDefaultAssets)
   const [dead, setDead]               = useState(false)
   const [deathCause, setDeathCause]   = useState(null)
+  const [mentalHealth, setMentalHealth] = useState(100)
 
-  const cookiesRef   = useRef(0)
-  const totalRef     = useRef(0)
-  const ownedRef     = useRef({})
-  const loanRef      = useRef(0)
-  const assetsRef    = useRef(getDefaultAssets())
-  const saveTimer    = useRef(null)
+  const cookiesRef      = useRef(0)
+  const totalRef        = useRef(0)
+  const ownedRef        = useRef({})
+  const loanRef         = useRef(0)
+  const assetsRef       = useRef(getDefaultAssets())
+  const mentalRef       = useRef(100)
+  const saveTimer       = useRef(null)
 
   const userId = user?.profile?.sub
 
@@ -65,6 +67,7 @@ export default function Game({ user, onLogout }) {
   useEffect(() => { ownedRef.current = owned }, [owned])
   useEffect(() => { loanRef.current = loan }, [loan])
   useEffect(() => { assetsRef.current = assets }, [assets])
+  useEffect(() => { mentalRef.current = mentalHealth }, [mentalHealth])
 
   // Load save from Firebase
   useEffect(() => {
@@ -77,6 +80,7 @@ export default function Game({ user, onLogout }) {
           setOwned(data.owned ?? {})
           setLoan(data.loan ?? 0)
           setAssets({ ...getDefaultAssets(), ...(data.assets ?? {}) })
+          setMentalHealth(data.mentalHealth ?? 100)
         }
       })
       .catch(console.error)
@@ -113,6 +117,23 @@ export default function Game({ user, onLogout }) {
     return () => clearInterval(interval)
   }, [loaded])
 
+  // Mental health passive regen: +1 every 20s
+  useEffect(() => {
+    if (!loaded) return
+    const interval = setInterval(() => {
+      setMentalHealth(mh => {
+        const next = Math.min(100, mh + 1)
+        mentalRef.current = next
+        return next
+      })
+    }, 20000)
+    return () => clearInterval(interval)
+  }, [loaded])
+
+  const changeMentalHealth = (delta) => {
+    setMentalHealth(mh => Math.max(0, Math.min(100, mh + delta)))
+  }
+
   const scheduleSave = () => {
     if (!userId) return
     if (saveTimer.current) clearTimeout(saveTimer.current)
@@ -125,6 +146,7 @@ export default function Game({ user, onLogout }) {
           owned: ownedRef.current,
           loan: loanRef.current,
           assets: assetsRef.current,
+          mentalHealth: mentalRef.current,
           savedAt: new Date().toISOString(),
         })
       } catch (e) {
@@ -166,6 +188,10 @@ export default function Game({ user, onLogout }) {
     scheduleSave()
   }
 
+  const handleMentalChange = (delta) => {
+    changeMentalHealth(delta)
+  }
+
   const handleBorrow = (amount, totalOwed) => {
     setCookies(c => c + amount)
     setLoan(l => l + totalOwed)
@@ -185,25 +211,27 @@ export default function Game({ user, onLogout }) {
     const newQty = qty - 1
     setAssets(a => ({ ...a, [asset.id]: newQty }))
     setCookies(c => c + asset.price)
+    changeMentalHealth(asset.mentalImpact ?? -3)
     scheduleSave()
     if (asset.fatalAtZero && newQty === 0) {
       setTimeout(() => handleDeath(asset), 600)
     }
   }
 
-  const handleDeath = (asset) => {
-    setDeathCause(asset)
+  const handleDeath = (cause) => {
+    setDeathCause(cause)
     setCookies(0)
     setTotal(0)
     setOwned({})
     setLoan(0)
     setAssets(getDefaultAssets())
+    setMentalHealth(100)
     setDead(true)
-    // Save reset immediately
     if (userId) {
       saveScore(userId, {
         cookies: 0, totalCookies: 0, owned: {}, loan: 0,
-        assets: getDefaultAssets(), savedAt: new Date().toISOString(),
+        assets: getDefaultAssets(), mentalHealth: 100,
+        savedAt: new Date().toISOString(),
       }).catch(console.error)
     }
   }
@@ -216,7 +244,12 @@ export default function Game({ user, onLogout }) {
   const handleBuyItem = (item) => {
     if (cookies < item.cost) return
     setCookies(c => c - item.cost)
-    setAssets(a => ({ ...a, [item.id]: (a[item.id] ?? 0) + 1 }))
+    if (item.consumable) {
+      changeMentalHealth(item.mentalBoost ?? 0)
+    } else {
+      setAssets(a => ({ ...a, [item.id]: (a[item.id] ?? 0) + 1 }))
+      changeMentalHealth(item.mentalBoost ?? 3)
+    }
     scheduleSave()
   }
 
@@ -226,13 +259,25 @@ export default function Game({ user, onLogout }) {
     if (win) {
       const gain = Math.floor(gamble.cost * gamble.mult)
       setCookies(c => c - gamble.cost + gain)
+      changeMentalHealth(gamble.mental ?? 5)
     } else {
       setCookies(c => c - gamble.cost)
+      changeMentalHealth(-(gamble.mental ?? 5))
     }
     setGambleResults(r => ({ ...r, [gamble.id]: win ? 'win' : 'lose' }))
     setTimeout(() => setGambleResults(r => { const n = { ...r }; delete n[gamble.id]; return n }), 1600)
     scheduleSave()
   }
+
+  // Mental health = 0 → death
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (!loaded || dead || mentalHealth > 0) return
+    const timer = setTimeout(() =>
+      handleDeath({ name: 'dépression totale', type: 'mental' })
+    , 400)
+    return () => clearTimeout(timer)
+  }, [mentalHealth, loaded, dead])
 
   if (!loaded) {
     return (
@@ -256,8 +301,10 @@ export default function Game({ user, onLogout }) {
             <div className="death-skull">💀</div>
             <h2 className="death-title">Vous êtes mort</h2>
             <p className="death-msg">
-              Vous avez vendu votre <strong>{deathCause?.name}</strong>…<br />
-              Tout est perdu. Cookies, upgrades, emprunt — tout.
+              {deathCause?.type === 'mental'
+                ? <>Votre santé mentale a atteint 0.<br />Vous avez sombré dans la dépression…</>
+                : <>Vous avez vendu votre <strong>{deathCause?.name}</strong>…</>}
+              <br />Tout est perdu. Cookies, upgrades, emprunt — tout.
             </p>
             <button className="btn-respawn" onClick={handleRespawn}>
               Recommencer à zéro
@@ -291,6 +338,20 @@ export default function Game({ user, onLogout }) {
           💼 Vie
         </button>
       </nav>
+
+      {/* Mental health bar */}
+      <div className="mental-bar-container">
+        <span className="mental-label">
+          {mentalHealth >= 70 ? '😊' : mentalHealth >= 40 ? '😐' : '😰'} Santé mentale
+        </span>
+        <div className="mental-bar-track">
+          <div
+            className={`mental-bar-fill ${mentalHealth >= 70 ? 'mental-good' : mentalHealth >= 40 ? 'mental-mid' : 'mental-bad'}`}
+            style={{ width: `${mentalHealth}%` }}
+          />
+        </div>
+        <span className="mental-pct">{Math.round(mentalHealth)}%</span>
+      </div>
 
       <main className="game-main">
         {tab === 'clicker' ? (
@@ -333,7 +394,7 @@ export default function Game({ user, onLogout }) {
           <p className="total-label">Total cuit : {fmt(totalCookies)} cookies</p>
         </section>
         ) : tab === 'casino' ? (
-          <Casino cookies={cookies} onResult={handleCasinoResult} />
+          <Casino cookies={cookies} onResult={handleCasinoResult} onMentalChange={handleMentalChange} />
         ) : tab === 'life' ? (
           <Life
             cookies={cookies}
