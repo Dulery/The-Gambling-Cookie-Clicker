@@ -518,6 +518,190 @@ function Wheel({ cookies, onResult, onMentalChange }) {
   )
 }
 
+// ── Poker (5-Card Draw) ───────────────────────────────────────────────────────
+
+const POKER_COMBOS = [
+  { name: 'Quinte Flush Royale', short: 'A-K-Q-J-10 même couleur',     mult: 250, icon: '👑🔥' },
+  { name: 'Quinte Flush',        short: '5 consécutives même couleur',  mult: 50,  icon: '✨'   },
+  { name: 'Carré',               short: '4 cartes identiques',          mult: 25,  icon: '4️⃣'  },
+  { name: 'Full House',          short: 'Brelan + Paire',               mult: 9,   icon: '🏠'   },
+  { name: 'Couleur (Flush)',      short: '5 de même couleur',            mult: 6,   icon: '♠️'   },
+  { name: 'Suite (Straight)',     short: '5 cartes consécutives',        mult: 4,   icon: '📈'   },
+  { name: 'Brelan',              short: '3 cartes identiques',           mult: 3,   icon: '3️⃣'  },
+  { name: 'Double Paire',        short: '2 paires différentes',          mult: 2,   icon: '2️⃣2️⃣' },
+  { name: 'Paire (Valet ou +)',  short: 'Paire de J, Q, K ou A',        mult: 1,   icon: '↩️'   },
+]
+
+function evaluatePokerHand(hand) {
+  const vals  = hand.map(c => c.value).sort((a, b) => a - b)
+  const suits = hand.map(c => c.suit)
+
+  const counts = {}
+  vals.forEach(v => { counts[v] = (counts[v] || 0) + 1 })
+  const groups = Object.values(counts).sort((a, b) => b - a)
+
+  const isFlush = suits.every(s => s === suits[0])
+
+  const uniq = [...new Set(vals)].sort((a, b) => a - b)
+  const isRoyalStraight = uniq.length === 5 &&
+    JSON.stringify(uniq) === JSON.stringify([1, 10, 11, 12, 13])
+  const isStraight = uniq.length === 5 &&
+    (uniq[4] - uniq[0] === 4 || isRoyalStraight)
+
+  if (isFlush && isRoyalStraight)        return { name: 'Quinte Flush Royale', mult: 250, rank: 9 }
+  if (isFlush && isStraight)             return { name: 'Quinte Flush',        mult: 50,  rank: 8 }
+  if (groups[0] === 4)                   return { name: 'Carré',               mult: 25,  rank: 7 }
+  if (groups[0] === 3 && groups[1] === 2) return { name: 'Full House',          mult: 9,   rank: 6 }
+  if (isFlush)                           return { name: 'Couleur (Flush)',      mult: 6,   rank: 5 }
+  if (isStraight)                        return { name: 'Suite (Straight)',     mult: 4,   rank: 4 }
+  if (groups[0] === 3)                   return { name: 'Brelan',               mult: 3,   rank: 3 }
+  if (groups[0] === 2 && groups[1] === 2) return { name: 'Double Paire',        mult: 2,   rank: 2 }
+  if (groups[0] === 2) {
+    const pairVal = parseInt(Object.entries(counts).find(([, c]) => c === 2)[0])
+    if (pairVal === 1 || pairVal >= 11)  return { name: 'Paire (Valet ou +)',  mult: 1,   rank: 1 }
+  }
+  return { name: 'Rien', mult: 0, rank: 0 }
+}
+
+function Poker({ cookies, onResult, onMentalChange }) {
+  const [deck,    setDeck]    = useState([])
+  const [hand,    setHand]    = useState([])
+  const [held,    setHeld]    = useState([false, false, false, false, false])
+  const [bet,     setBet]     = useState(100)
+  const [phase,   setPhase]   = useState('idle')   // idle | dealt | done
+  const [result,  setResult]  = useState(null)
+  const [showRef, setShowRef] = useState(false)
+
+  const maxBet = Math.max(1, Math.min(cookies, 999999))
+
+  const deal = () => {
+    if (bet < 1 || bet > cookies) return
+    onResult(-bet)
+    const d = shuffle([...buildDeck(), ...buildDeck()])
+    setDeck(d.slice(5))
+    setHand(d.slice(0, 5))
+    setHeld([false, false, false, false, false])
+    setResult(null)
+    setPhase('dealt')
+  }
+
+  const toggleHold = (i) => {
+    setHeld(h => h.map((v, idx) => idx === i ? !v : v))
+  }
+
+  const draw = () => {
+    let dk = [...deck]
+    const newHand = hand.map((card, i) => {
+      if (held[i]) return card
+      const c = dk[0]; dk = dk.slice(1); return c
+    })
+    setDeck(dk)
+    setHand(newHand)
+    const res = evaluatePokerHand(newHand)
+    setResult(res)
+    setPhase('done')
+    if (res.mult > 0) {
+      onResult(Math.floor(bet * res.mult))
+      onMentalChange(res.rank >= 6 ? 5 : res.rank >= 3 ? 2 : 1)
+    } else {
+      onMentalChange(-3)
+    }
+  }
+
+  const reset = () => {
+    setPhase('idle')
+    setHand([])
+    setHeld([false, false, false, false, false])
+    setResult(null)
+  }
+
+  return (
+    <div className="poker">
+      <div className="poker-header">
+        <h3>🂡 Poker — 5 Card Draw</h3>
+        <button className="btn-poker-ref" onClick={() => setShowRef(r => !r)}>
+          {showRef ? '▲ Masquer' : '📋 Combinaisons'}
+        </button>
+      </div>
+
+      {showRef && (
+        <div className="poker-ref">
+          <div className="poker-ref-title">Du plus fort au plus faible</div>
+          {POKER_COMBOS.map(c => (
+            <div key={c.name} className="poker-ref-row">
+              <span className="poker-ref-icon">{c.icon}</span>
+              <div className="poker-ref-info">
+                <span className="poker-ref-name">{c.name}</span>
+                <span className="poker-ref-short">{c.short}</span>
+              </div>
+              <span className="poker-ref-mult">×{c.mult}</span>
+            </div>
+          ))}
+          <div className="poker-ref-row poker-ref-row-zero">
+            <span className="poker-ref-icon">❌</span>
+            <div className="poker-ref-info">
+              <span className="poker-ref-name">Rien</span>
+              <span className="poker-ref-short">Paire de 10 ou moins</span>
+            </div>
+            <span className="poker-ref-mult poker-ref-mult-zero">×0</span>
+          </div>
+        </div>
+      )}
+
+      {hand.length > 0 && (
+        <div className="poker-table">
+          <div className="poker-hand">
+            {hand.map((card, i) => (
+              <div
+                key={i}
+                className={`poker-card-wrap ${held[i] ? 'held' : ''} ${phase === 'dealt' ? 'clickable' : ''}`}
+                onClick={() => phase === 'dealt' && toggleHold(i)}
+              >
+                <span className="hold-label">{held[i] ? '✅ GARDE' : phase === 'dealt' ? '  clic  ' : ''}</span>
+                <img src={cardImg(card)} className="poker-card-img" alt={`${cardLabel(card)} ${card.suit}`} />
+              </div>
+            ))}
+          </div>
+          {phase === 'dealt' && (
+            <p className="poker-hint">Cliquez sur les cartes à garder, puis tirez.</p>
+          )}
+          {result && (
+            <div className={`poker-result ${result.mult > 0 ? 'poker-win' : 'poker-lose'}`}>
+              {result.mult > 0
+                ? `🎉 ${result.name} — +${fmt(Math.floor(bet * result.mult))} 🍪`
+                : `😞 ${result.name} — Perdu ${fmt(bet)} 🍪`}
+            </div>
+          )}
+        </div>
+      )}
+
+      <div className="poker-actions">
+        {phase === 'idle' && (
+          <>
+            <div className="bet-row">
+              <span>Mise</span>
+              <input type="number" className="bet-input" value={bet} min={1} max={maxBet}
+                onChange={e => setBet(Math.max(1, Math.min(maxBet, +e.target.value)))} />
+              <button className="btn-bet" onClick={() => setBet(b => Math.max(1, Math.floor(b / 2)))}>½</button>
+              <button className="btn-bet accent" onClick={() => setBet(b => Math.min(maxBet, b * 2))}>×2</button>
+              <button className="btn-bet red" onClick={() => setBet(maxBet)}>MAX</button>
+            </div>
+            <button className="btn-deal" onClick={deal} disabled={bet > cookies || bet < 1}>
+              🂡 Distribuer ({fmt(bet)} 🍪)
+            </button>
+          </>
+        )}
+        {phase === 'dealt' && (
+          <button className="btn-deal" onClick={draw}>🃏 Tirer les cartes</button>
+        )}
+        {phase === 'done' && (
+          <button className="btn-deal" onClick={reset}>🔄 Nouvelle donne</button>
+        )}
+      </div>
+    </div>
+  )
+}
+
 // ── Casino wrapper ────────────────────────────────────────────────────────────
 
 export default function Casino({ cookies, onResult, onMentalChange }) {
@@ -529,11 +713,13 @@ export default function Casino({ cookies, onResult, onMentalChange }) {
         <button className={`casino-tab ${tab === 'slots'     ? 'active' : ''}`} onClick={() => setTab('slots')}>🎰 Slots</button>
         <button className={`casino-tab ${tab === 'wheel'     ? 'active' : ''}`} onClick={() => setTab('wheel')}>🎡 Roue</button>
         <button className={`casino-tab ${tab === 'blackjack' ? 'active' : ''}`} onClick={() => setTab('blackjack')}>🃏 Blackjack</button>
+        <button className={`casino-tab ${tab === 'poker'     ? 'active' : ''}`} onClick={() => setTab('poker')}>🂡 Poker</button>
       </div>
 
       {tab === 'slots'     && <SlotMachine cookies={cookies} onResult={onResult} onMentalChange={onMentalChange} />}
       {tab === 'wheel'     && <Wheel       cookies={cookies} onResult={onResult} onMentalChange={onMentalChange} />}
       {tab === 'blackjack' && <Blackjack   cookies={cookies} onResult={onResult} onMentalChange={onMentalChange} />}
+      {tab === 'poker'     && <Poker       cookies={cookies} onResult={onResult} onMentalChange={onMentalChange} />}
     </div>
   )
 }
