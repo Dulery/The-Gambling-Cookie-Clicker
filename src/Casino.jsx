@@ -711,7 +711,7 @@ const RR_CONFIGS = [
   { b: 2, mult: 2.2,  deathOdds: '33%'  },
   { b: 3, mult: 3.5,  deathOdds: '50%'  },
   { b: 4, mult: 6,    deathOdds: '67%'  },
-  { b: 5, mult: 12,   deathOdds: '83%'  },
+  { b: 5, mult: 30,   deathOdds: '83%'  },
 ]
 
 function RussianRoulette({ cookies, onResult, onMentalChange, onDeath }) {
@@ -824,7 +824,7 @@ function RussianRoulette({ cookies, onResult, onMentalChange, onDeath }) {
       )}
 
       {phase === 'result' && survived && (
-        <button className="rr-again-btn" onClick={reset}>🔄 Rejouer</button>
+        <button className="rr-again-btn" onClick={reset}>🔄 Yes !</button>
       )}
     </div>
   )
