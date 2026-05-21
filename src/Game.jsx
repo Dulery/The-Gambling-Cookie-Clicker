@@ -60,7 +60,7 @@ export default function Game({ user, onLogout }) {
   const [tab, setTab]                 = useState('clicker')
   const [leaderboard, setLeaderboard] = useState([])
   const [lbLoading, setLbLoading]    = useState(false)
-  const [loan, setLoan]               = useState(1000000)
+  const [loan, setLoan]               = useState(0)
   const [gambleResults, setGambleResults] = useState({})
   const [assets, setAssets]           = useState(getDefaultAssets)
   const [dead, setDead]               = useState(false)
@@ -252,13 +252,13 @@ export default function Game({ user, onLogout }) {
     setCookies(0)
     setTotal(0)
     setOwned({})
-    setLoan(1000000)
+    setLoan(0)
     setAssets(getDefaultAssets())
     setMentalHealth(100)
     setDead(true)
     if (userId) {
       saveScore(userId, {
-        cookies: 0, totalCookies: 0, owned: {}, loan: 1000000,
+        cookies: 0, totalCookies: 0, owned: {}, loan: 0,
         assets: getDefaultAssets(), mentalHealth: 100,
         savedAt: new Date().toISOString(),
       }).catch(console.error)
