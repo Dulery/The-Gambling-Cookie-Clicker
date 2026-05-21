@@ -127,25 +127,18 @@ export default function Game({ user, onLogout }) {
     return () => clearInterval(interval)
   }, [cps, loaded])
 
-  // Loan interest: +2% every 20s + saisie 5% cookies + malus mental
+  // Loan interest: +2% every 20s + malus mental
   useEffect(() => {
     if (!loaded) return
     const interval = setInterval(() => {
       const currentLoan = loanRef.current
       if (currentLoan <= 0) return
 
-      // Apply interest
-      const withInterest = Math.ceil(currentLoan * 1.02)
-
-      // Seize 5% of current cookies toward debt
-      const seized = Math.floor(Math.max(0, cookiesRef.current) * 0.05)
-      const newLoan = Math.max(0, withInterest - seized)
-
+      const newLoan = Math.ceil(currentLoan * 1.02)
       setLoan(newLoan)
       loanRef.current = newLoan
-      if (seized > 0) setCookies(c => c - seized)
 
-      // Mental health penalty proportional to debt size
+      // Mental health penalty while in debt
       setMentalHealth(mh => Math.max(0, mh - 2))
       scheduleSave()
     }, 20000)

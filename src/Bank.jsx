@@ -47,15 +47,16 @@ export default function Bank({ cookies, loan, onBorrow, onRepay }) {
           <div className="bank-loan-card">
             <span className="bank-balance-label">Dette totale</span>
             <span className="bank-balance-value red">{fmt(loan)} 🍪</span>
-            <span className="bank-interest-note">📈 +1% toutes les 30 sec</span>
+            <span className="bank-interest-note">📈 +2% toutes les 20 sec</span>
           </div>
         )}
       </div>
 
       {loan > 0 && (
         <div className="bank-warning">
-          ⚠️ Vous avez une dette de <strong>{fmt(loan)} 🍪</strong>. Les intérêts
-          s'accumulent toutes les 30 secondes. Remboursez avant que ça empire !
+          ⚠️ Vous avez une dette de <strong>{fmt(loan)} 🍪</strong>.<br/>
+          📈 +2% d’intérêts toutes les 20 secondes — la dette grossit si vous ne remboursez pas.<br/>
+          🧠 <strong>−2 de santé mentale</strong> à chaque tick d’intérêt — si votre santé mentale atteint 0, vous mourez et tout est perdu.
         </div>
       )}
 
