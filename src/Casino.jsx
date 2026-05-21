@@ -709,8 +709,8 @@ function Poker({ cookies, onResult, onMentalChange }) {
 const RR_CONFIGS = [
   { b: 1, mult: 1.5,  deathOdds: '17%'  },
   { b: 2, mult: 2.2,  deathOdds: '33%'  },
-  { b: 3, mult: 3.5,  deathOdds: '50%'  },
-  { b: 4, mult: 6,    deathOdds: '67%'  },
+  { b: 3, mult: 5,  deathOdds: '50%'  },
+  { b: 4, mult: 10,    deathOdds: '67%'  },
   { b: 5, mult: 30,   deathOdds: '83%'  },
 ]
 

@@ -127,7 +127,7 @@ export default function Game({ user, onLogout }) {
     return () => clearInterval(interval)
   }, [cps, loaded])
 
-  // Loan interest: +2% every 20 seconds
+  // Loan interest: +2% every 20 seconds + mental malus if large debt
   useEffect(() => {
     if (!loaded) return
     const interval = setInterval(() => {
@@ -137,9 +137,44 @@ export default function Game({ user, onLogout }) {
         loanRef.current = newLoan
         return newLoan
       })
+      // Mental malus if debt > 10 000
+      if (loanRef.current > 10000) {
+        setMentalHealth(mh => {
+          const next = Math.max(0, mh - 1)
+          mentalRef.current = next
+          return next
+        })
+      }
     }, 20000)
     return () => clearInterval(interval)
   }, [loaded])
+
+  // Saisie automatique : toutes les 30s, 15% des cookies remboursent la dette
+  useEffect(() => {
+    if (!loaded) return
+    const interval = setInterval(() => {
+      if (loanRef.current <= 0) return
+      setCookies(c => {
+        if (c <= 0) return c
+        const seized = Math.min(loanRef.current, Math.ceil(c * 0.15))
+        setLoan(l => {
+          const newLoan = Math.max(0, l - seized)
+          loanRef.current = newLoan
+          return newLoan
+        })
+        return c - seized
+      })
+    }, 30000)
+    return () => clearInterval(interval)
+  }, [loaded])
+
+  // Faillite : dette > 5× les cookies ET > 50 000
+  useEffect(() => {
+    if (!loaded || loan <= 0 || loan <= 50000) return
+    if (cookies >= 0 && loan > cookies * 5) {
+      handleDeath({ name: 'faillite totale', type: 'bankrupt' })
+    }
+  }, [loan, cookies, loaded])
 
   // Mental health passive regen: +1 every 60s
   useEffect(() => {
@@ -352,6 +387,8 @@ export default function Game({ user, onLogout }) {
                 ? <>Votre santé mentale a atteint 0.<br />Vous avez sombré dans la dépression…</>
                 : deathCause?.type === 'roulette'
                 ? <>La balle était dans la chambre.<br />Vous n&apos;avez pas eu de chance…</>
+                : deathCause?.type === 'bankrupt'
+                ? <>Votre dette a dépassé 5× vos cookies.<br />La banque a tout saisi.</>
                 : <>Vous avez vendu votre <strong>{deathCause?.name}</strong>…</>}
               <br />Tout est perdu. Cookies, upgrades, emprunt — tout.
             </p>

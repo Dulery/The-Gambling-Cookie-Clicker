@@ -47,15 +47,21 @@ export default function Bank({ cookies, loan, onBorrow, onRepay }) {
           <div className="bank-loan-card">
             <span className="bank-balance-label">Dette totale</span>
             <span className="bank-balance-value red">{fmt(loan)} 🍪</span>
-            <span className="bank-interest-note">📈 +1% toutes les 30 sec</span>
+            <span className="bank-interest-note">📈 +2% toutes les 20 sec</span>
           </div>
         )}
       </div>
 
-      {loan > 0 && (
+      {loan > 0 && cookies > 0 && loan > cookies * 3 && loan > 50000 && (
+        <div className="bank-warning bank-critical">
+          🚨 <strong>DANGER DE FAILLITE</strong> — Votre dette ({fmt(loan)} 🍪) dépasse largement vos cookies ({fmt(cookies)} 🍪).
+          Si elle atteint <strong>5× vos cookies</strong>, la banque saisit tout et vous recommencez à zéro.
+        </div>
+      )}
+
+      {loan > 0 && !(cookies > 0 && loan > cookies * 3 && loan > 50000) && (
         <div className="bank-warning">
-          ⚠️ Vous avez une dette de <strong>{fmt(loan)} 🍪</strong>. Les intérêts
-          s'accumulent toutes les 30 secondes. Remboursez avant que ça empire !
+          ⚠️ Vous avez une dette de <strong>{fmt(loan)} 🍪</strong>. Les intérêts (+2%) s’accumulent toutes les 20 secondes et 15% de vos cookies sont prélevés automatiquement.
         </div>
       )}
 
