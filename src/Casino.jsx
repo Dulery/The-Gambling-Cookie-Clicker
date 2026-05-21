@@ -150,7 +150,7 @@ function shuffle(arr) {
 }
 
 function cardImg(card) {
-  return `/cards/${card.folder}/card_${card.value}_${card.suit}.png`
+  return `/${card.folder}/card_${card.value}_${card.suit}.png`
 }
 
 function bjVal(card) {
