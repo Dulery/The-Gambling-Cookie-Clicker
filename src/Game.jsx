@@ -350,6 +350,8 @@ export default function Game({ user, onLogout }) {
             <p className="death-msg">
               {deathCause?.type === 'mental'
                 ? <>Votre santé mentale a atteint 0.<br />Vous avez sombré dans la dépression…</>
+                : deathCause?.type === 'roulette'
+                ? <>La balle était dans la chambre.<br />Vous n&apos;avez pas eu de chance…</>
                 : <>Vous avez vendu votre <strong>{deathCause?.name}</strong>…</>}
               <br />Tout est perdu. Cookies, upgrades, emprunt — tout.
             </p>
