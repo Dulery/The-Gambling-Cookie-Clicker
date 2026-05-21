@@ -476,7 +476,7 @@ export default function Game({ user, onLogout }) {
           <p className="total-label">Total cuit : {fmt(totalCookies)} cookies</p>
         </section>
         ) : tab === 'casino' ? (
-          <Casino cookies={cookies} onResult={handleCasinoResult} onMentalChange={handleMentalChange} />
+          <Casino cookies={cookies} onResult={handleCasinoResult} onMentalChange={handleMentalChange} onDeath={handleDeath} />
         ) : tab === 'life' ? (
           <Life
             cookies={cookies}

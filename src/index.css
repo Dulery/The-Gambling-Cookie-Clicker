@@ -1017,6 +1017,135 @@ body {
   color: var(--accent, #f5c542);
 }
 
+/* ── Russian Roulette ─────────────────────── */
+.rr {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 1.25rem 1rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.rr-title {
+  font-size: 1.4rem;
+  font-weight: 800;
+  margin: 0;
+}
+.rr-subtitle {
+  font-size: 0.82rem;
+  color: var(--text-muted, #888);
+  text-align: center;
+  margin: 0;
+  line-height: 1.5;
+}
+.rr-cyl-wrap {
+  display: flex;
+  justify-content: center;
+}
+@keyframes rrSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(1440deg); }
+}
+.rr-spinning svg {
+  animation: rrSpin 1.8s cubic-bezier(0.2, 0.8, 0.4, 1) forwards;
+}
+.rr-status {
+  font-size: 1rem;
+  color: var(--text-muted, #888);
+  animation: pulse 0.6s infinite alternate;
+}
+@keyframes pulse { from { opacity: 0.5; } to { opacity: 1; } }
+.rr-result-banner {
+  font-size: 1.3rem;
+  font-weight: 800;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  text-align: center;
+}
+.rr-survived {
+  background: rgba(80, 200, 80, 0.15);
+  border: 1px solid #4caf50;
+  color: #6de06d;
+}
+.rr-dead {
+  background: rgba(200, 40, 40, 0.15);
+  border: 1px solid #cc3333;
+  color: #ff6060;
+}
+.rr-config-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  width: 100%;
+}
+.rr-config-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.55rem 0.9rem;
+  border-radius: 9px;
+  border: 1px solid var(--border, #2a2a3a);
+  background: var(--surface, #1e1e2e);
+  cursor: pointer;
+  color: inherit;
+  gap: 0.75rem;
+  transition: border-color 0.15s;
+}
+.rr-config-btn.active {
+  border-color: #cc2222;
+  background: rgba(200, 34, 34, 0.1);
+}
+.rr-config-btn:hover:not(.active) {
+  border-color: #666;
+}
+.rr-chambers-mini {
+  font-size: 1rem;
+  letter-spacing: 2px;
+}
+.rr-config-meta {
+  font-size: 0.82rem;
+  color: var(--text-muted, #888);
+  font-variant-numeric: tabular-nums;
+}
+.rr-bet-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  width: 100%;
+}
+.rr-bet-row .bet-input {
+  flex: 1;
+}
+.rr-shoot-btn {
+  width: 100%;
+  padding: 0.8rem;
+  border-radius: 10px;
+  border: none;
+  background: #cc2222;
+  color: #fff;
+  font-size: 1.05rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.rr-shoot-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.rr-shoot-btn:hover:not(:disabled) {
+  background: #e02222;
+}
+.rr-again-btn {
+  padding: 0.65rem 1.5rem;
+  border-radius: 10px;
+  border: 1px solid var(--border, #2a2a3a);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
 /* ── Profile modal ────────────────────────── */
 .profile-overlay {
   position: fixed;

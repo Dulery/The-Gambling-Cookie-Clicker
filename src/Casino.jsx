@@ -704,7 +704,144 @@ function Poker({ cookies, onResult, onMentalChange }) {
 
 // ── Casino wrapper ────────────────────────────────────────────────────────────
 
-export default function Casino({ cookies, onResult, onMentalChange }) {
+// ── Russian Roulette ──────────────────────────────────────────────────────────
+
+const RR_CONFIGS = [
+  { b: 1, mult: 1.5,  deathOdds: '17%'  },
+  { b: 2, mult: 2.2,  deathOdds: '33%'  },
+  { b: 3, mult: 3.5,  deathOdds: '50%'  },
+  { b: 4, mult: 6,    deathOdds: '67%'  },
+  { b: 5, mult: 12,   deathOdds: '83%'  },
+]
+
+function RussianRoulette({ cookies, onResult, onMentalChange, onDeath }) {
+  const [bullets, setBullets]   = useState(1)
+  const [bet, setBet]           = useState(100)
+  const [phase, setPhase]       = useState('idle')   // idle | spinning | result
+  const [survived, setSurvived] = useState(null)
+  const [bulletSet, setBulletSet]     = useState(null)
+  const [firedChamber, setFiredChamber] = useState(null)
+
+  const cfg    = RR_CONFIGS[bullets - 1]
+  const maxBet = Math.max(1, cookies)
+
+  const handleShoot = () => {
+    if (cookies < bet || phase !== 'idle') return
+    setPhase('spinning')
+
+    // Place bullets in random chambers
+    const shuffled = [...Array(6).keys()].sort(() => Math.random() - 0.5)
+    const loaded   = new Set(shuffled.slice(0, bullets))
+    const fired    = Math.floor(Math.random() * 6)
+    const hit      = loaded.has(fired)
+
+    setTimeout(() => {
+      setBulletSet(loaded)
+      setFiredChamber(fired)
+      setSurvived(!hit)
+      setPhase('result')
+      if (!hit) {
+        onResult(Math.floor(bet * (cfg.mult - 1)))
+        onMentalChange(-3 * bullets)
+      } else {
+        onResult(-bet)
+        onMentalChange(-50)
+        setTimeout(() => onDeath({ name: 'roulette russe 🔫', type: 'roulette' }), 2000)
+      }
+    }, 1800)
+  }
+
+  const reset = () => {
+    setSurvived(null)
+    setBulletSet(null)
+    setFiredChamber(null)
+    setPhase('idle')
+  }
+
+  return (
+    <div className="rr">
+      <h2 className="rr-title">🔫 Roulette Russe</h2>
+      <p className="rr-subtitle">Choisissez le nombre de balles — plus il y en a, plus le gain est élevé.<br/>Si vous perdez, vous <strong>mourez</strong> et recommencez à zéro.</p>
+
+      {/* Cylinder */}
+      <div className={`rr-cyl-wrap ${phase === 'spinning' ? 'rr-spinning' : ''}`}>
+        <svg viewBox="0 0 120 120" width="140" height="140">
+          <circle cx="60" cy="60" r="55" fill="#1a1a2e" stroke="#555" strokeWidth="3"/>
+          {[0,1,2,3,4,5].map(i => {
+            const angle = (i * 60 - 90) * Math.PI / 180
+            const cx    = 60 + 33 * Math.cos(angle)
+            const cy    = 60 + 33 * Math.sin(angle)
+            const hasBullet  = bulletSet?.has(i)
+            const isFired    = bulletSet && i === firedChamber
+            const fill       = bulletSet ? (hasBullet ? '#cc2222' : '#1e3a1e') : '#2a2a3e'
+            const stroke     = isFired ? '#ffffff' : '#555'
+            const strokeW    = isFired ? 3 : 1.5
+            return (
+              <g key={i}>
+                <circle cx={cx} cy={cy} r="12" fill={fill} stroke={stroke} strokeWidth={strokeW}/>
+                {isFired && <circle cx={cx} cy={cy} r="4" fill="#fff" opacity="0.85"/>}
+              </g>
+            )
+          })}
+          <circle cx="60" cy="60" r="7" fill="#444" stroke="#666" strokeWidth="1.5"/>
+        </svg>
+      </div>
+
+      {phase === 'spinning' && <p className="rr-status">🌀 Le barillet tourne…</p>}
+
+      {phase === 'result' && (
+        <div className={`rr-result-banner ${survived ? 'rr-survived' : 'rr-dead'}`}>
+          {survived
+            ? `💨 SURVIVANT ! +${fmt(Math.floor(bet * (cfg.mult - 1)))} 🍪`
+            : '💀 VOUS ÊTES MORT'}
+        </div>
+      )}
+
+      {phase === 'idle' && (
+        <>
+          <div className="rr-config-list">
+            {RR_CONFIGS.map(c => (
+              <button
+                key={c.b}
+                className={`rr-config-btn ${bullets === c.b ? 'active' : ''}`}
+                onClick={() => setBullets(c.b)}
+              >
+                <span className="rr-chambers-mini">{'🔴'.repeat(c.b)}{'⚫'.repeat(6 - c.b)}</span>
+                <span className="rr-config-meta">×{c.mult} &nbsp;—&nbsp; {c.deathOdds} de mourir</span>
+              </button>
+            ))}
+          </div>
+
+          <div className="rr-bet-row">
+            <input
+              type="number" className="bet-input"
+              value={bet} min={1} max={maxBet}
+              onChange={e => setBet(Math.max(1, Math.min(maxBet, +e.target.value)))}
+            />
+            <button className="btn-bet accent" onClick={() => setBet(b => Math.min(maxBet, b * 2))}>×2</button>
+            <button className="btn-bet red"    onClick={() => setBet(maxBet)}>MAX</button>
+          </div>
+
+          <button
+            className="rr-shoot-btn"
+            onClick={handleShoot}
+            disabled={cookies < bet || bet < 1}
+          >
+            🔫 Tirer
+          </button>
+        </>
+      )}
+
+      {phase === 'result' && survived && (
+        <button className="rr-again-btn" onClick={reset}>🔄 Rejouer</button>
+      )}
+    </div>
+  )
+}
+
+// ── Casino container ──────────────────────────────────────────────────────────
+
+export default function Casino({ cookies, onResult, onMentalChange, onDeath }) {
   const [tab, setTab] = useState('slots')
 
   return (
@@ -714,12 +851,14 @@ export default function Casino({ cookies, onResult, onMentalChange }) {
         <button className={`casino-tab ${tab === 'wheel'     ? 'active' : ''}`} onClick={() => setTab('wheel')}>🎡 Roue</button>
         <button className={`casino-tab ${tab === 'blackjack' ? 'active' : ''}`} onClick={() => setTab('blackjack')}>🃏 Blackjack</button>
         <button className={`casino-tab ${tab === 'poker'     ? 'active' : ''}`} onClick={() => setTab('poker')}>🂡 Poker</button>
+        <button className={`casino-tab ${tab === 'roulette'  ? 'active' : ''}`} onClick={() => setTab('roulette')}>🔫 Roulette</button>
       </div>
 
-      {tab === 'slots'     && <SlotMachine cookies={cookies} onResult={onResult} onMentalChange={onMentalChange} />}
-      {tab === 'wheel'     && <Wheel       cookies={cookies} onResult={onResult} onMentalChange={onMentalChange} />}
-      {tab === 'blackjack' && <Blackjack   cookies={cookies} onResult={onResult} onMentalChange={onMentalChange} />}
-      {tab === 'poker'     && <Poker       cookies={cookies} onResult={onResult} onMentalChange={onMentalChange} />}
+      {tab === 'slots'     && <SlotMachine     cookies={cookies} onResult={onResult} onMentalChange={onMentalChange} />}
+      {tab === 'wheel'     && <Wheel           cookies={cookies} onResult={onResult} onMentalChange={onMentalChange} />}
+      {tab === 'blackjack' && <Blackjack       cookies={cookies} onResult={onResult} onMentalChange={onMentalChange} />}
+      {tab === 'poker'     && <Poker           cookies={cookies} onResult={onResult} onMentalChange={onMentalChange} />}
+      {tab === 'roulette'  && <RussianRoulette cookies={cookies} onResult={onResult} onMentalChange={onMentalChange} onDeath={onDeath} />}
     </div>
   )
 }
