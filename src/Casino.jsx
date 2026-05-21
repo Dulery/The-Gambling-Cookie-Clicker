@@ -47,7 +47,7 @@ function SlotMachine({ cookies, onResult, onMentalChange }) {
   const [msg, setMsg]         = useState(null)
   const animRef               = useRef(null)
 
-  const maxBet = Math.max(1, Math.min(cookies, 999999))
+  const maxBet = Math.max(1, cookies)
 
   const spin = () => {
     if (spinning || bet < 1 || bet > cookies) return
@@ -194,7 +194,7 @@ function Blackjack({ cookies, onResult, onMentalChange }) {
     return () => { mountedRef.current = false }
   }, [])
 
-  const maxBet = Math.max(1, Math.min(cookies, 999999))
+  const maxBet = Math.max(1, cookies)
 
   const deal = () => {
     if (bet < 1 || bet > cookies) return
@@ -387,7 +387,7 @@ function Wheel({ cookies, onResult, onMentalChange }) {
   const [result,   setResult]   = useState(null)
   const timerRef                = useRef(null)
 
-  const maxBet = Math.max(1, Math.min(cookies, 999999))
+  const maxBet = Math.max(1, cookies)
 
   // Two-step: set spinning (enables CSS transition), then apply rotation (triggers animation)
   useEffect(() => {
@@ -572,7 +572,7 @@ function Poker({ cookies, onResult, onMentalChange }) {
   const [result,  setResult]  = useState(null)
   const [showRef, setShowRef] = useState(false)
 
-  const maxBet = Math.max(1, Math.min(cookies, 999999))
+  const maxBet = Math.max(1, cookies)
 
   const deal = () => {
     if (bet < 1 || bet > cookies) return
