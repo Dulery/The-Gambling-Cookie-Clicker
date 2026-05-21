@@ -1145,6 +1145,11 @@ body {
   cursor: pointer;
   font-size: 0.95rem;
 }
+.rr-all-in {
+  font-size: 0.95rem;
+  color: var(--text-muted, #888);
+  margin: 0;
+}
 
 /* ── Profile modal ────────────────────────── */
 .profile-overlay {

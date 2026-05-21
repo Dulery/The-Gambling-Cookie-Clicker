@@ -716,14 +716,13 @@ const RR_CONFIGS = [
 
 function RussianRoulette({ cookies, onResult, onMentalChange, onDeath }) {
   const [bullets, setBullets]   = useState(1)
-  const [bet, setBet]           = useState(100)
   const [phase, setPhase]       = useState('idle')   // idle | spinning | result
   const [survived, setSurvived] = useState(null)
   const [bulletSet, setBulletSet]     = useState(null)
   const [firedChamber, setFiredChamber] = useState(null)
 
-  const cfg    = RR_CONFIGS[bullets - 1]
-  const maxBet = Math.max(1, cookies)
+  const cfg = RR_CONFIGS[bullets - 1]
+  const bet = Math.max(1, cookies)
 
   const handleShoot = () => {
     if (cookies < bet || phase !== 'idle') return
@@ -761,7 +760,7 @@ function RussianRoulette({ cookies, onResult, onMentalChange, onDeath }) {
   return (
     <div className="rr">
       <h2 className="rr-title">🔫 Roulette Russe</h2>
-      <p className="rr-subtitle">Choisissez le nombre de balles — plus il y en a, plus le gain est élevé.<br/>Si vous perdez, vous <strong>mourez</strong> et recommencez à zéro.</p>
+      <p className="rr-subtitle">Choisissez le nombre de balles — plus il y en a, plus le gain est élevé.<br/>Si vous perdez, vous <strong>mourez</strong> et recommencez à zéro.<br/>Vous misez toujours <strong>tous vos cookies</strong>.</p>
 
       {/* Cylinder */}
       <div className={`rr-cyl-wrap ${phase === 'spinning' ? 'rr-spinning' : ''}`}>
@@ -812,20 +811,12 @@ function RussianRoulette({ cookies, onResult, onMentalChange, onDeath }) {
             ))}
           </div>
 
-          <div className="rr-bet-row">
-            <input
-              type="number" className="bet-input"
-              value={bet} min={1} max={maxBet}
-              onChange={e => setBet(Math.max(1, Math.min(maxBet, +e.target.value)))}
-            />
-            <button className="btn-bet accent" onClick={() => setBet(b => Math.min(maxBet, b * 2))}>×2</button>
-            <button className="btn-bet red"    onClick={() => setBet(maxBet)}>MAX</button>
-          </div>
+          <p className="rr-all-in">Mise : <strong>{fmt(bet)} 🍪</strong> (tous vos cookies)</p>
 
           <button
             className="rr-shoot-btn"
             onClick={handleShoot}
-            disabled={cookies < bet || bet < 1}
+            disabled={cookies < 1}
           >
             🔫 Tirer
           </button>
