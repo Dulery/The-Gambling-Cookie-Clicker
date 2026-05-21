@@ -60,6 +60,9 @@ export default function Game({ user, onLogout }) {
   const [tab, setTab]                 = useState('clicker')
   const [leaderboard, setLeaderboard] = useState([])
   const [lbLoading, setLbLoading]    = useState(false)
+  const [customName, setCustomName]  = useState('')
+  const [profileOpen, setProfileOpen]= useState(false)
+  const [editingName, setEditingName]= useState('')
   const [loan, setLoan]               = useState(0)
   const [gambleResults, setGambleResults] = useState({})
   const [assets, setAssets]           = useState(getDefaultAssets)
@@ -94,9 +97,10 @@ export default function Game({ user, onLogout }) {
           setCookies(data.cookies ?? 0)
           setTotal(data.totalCookies ?? 0)
           setOwned(data.owned ?? {})
-          setLoan(data.loan ?? 1000000)
+          setLoan(data.loan ?? 0)
           setAssets({ ...getDefaultAssets(), ...(data.assets ?? {}) })
           setMentalHealth(data.mentalHealth ?? 100)
+          if (data.displayName) setCustomName(data.displayName)
         }
       })
       .catch(console.error)
@@ -159,7 +163,7 @@ export default function Game({ user, onLogout }) {
       setSaving(true)
       try {
         await saveScore(userId, {
-          displayName: user?.profile?.preferred_username || user?.profile?.name || user?.profile?.email || 'Joueur',
+          displayName: customName || user?.profile?.preferred_username || user?.profile?.name || user?.profile?.email || 'Joueur',
           cookies: cookiesRef.current,
           totalCookies: totalRef.current,
           owned: ownedRef.current,
@@ -318,7 +322,18 @@ export default function Game({ user, onLogout }) {
   }
 
   const picture = user?.profile?.picture
-  const name    = user?.profile?.name || user?.profile?.email || 'Joueur'
+  const name    = customName || user?.profile?.name || user?.profile?.email || 'Joueur'
+  const email   = user?.profile?.email || ''
+
+  const handleSaveName = () => {
+    const trimmed = editingName.trim()
+    if (!trimmed) return
+    setCustomName(trimmed)
+    setProfileOpen(false)
+    if (userId) {
+      saveScore(userId, { displayName: trimmed }).catch(console.error)
+    }
+  }
 
   return (
     <div className="game">
@@ -342,9 +357,35 @@ export default function Game({ user, onLogout }) {
         </div>
       )}
 
+      {/* Profile modal */}
+      {profileOpen && (
+        <div className="profile-overlay" onClick={() => setProfileOpen(false)}>
+          <div className="profile-modal" onClick={e => e.stopPropagation()}>
+            <h2 className="profile-title">👤 Mon profil</h2>
+            {picture && <img src={picture} alt="avatar" className="profile-avatar" referrerPolicy="no-referrer" />}
+            <label className="profile-label">Nom d&apos;affichage</label>
+            <input
+              className="profile-input"
+              value={editingName}
+              onChange={e => setEditingName(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && handleSaveName()}
+              placeholder={name}
+              maxLength={32}
+              autoFocus
+            />
+            <label className="profile-label">Email</label>
+            <div className="profile-email">{email}</div>
+            <div className="profile-actions">
+              <button className="btn-profile-save" onClick={handleSaveName}>Sauvegarder</button>
+              <button className="btn-profile-cancel" onClick={() => setProfileOpen(false)}>Annuler</button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <header className="game-header">
-        <div className="user-info">
+        <div className="user-info" onClick={() => { setEditingName(name); setProfileOpen(true) }} style={{cursor:'pointer'}} title="Modifier le profil">
           {picture && <img src={picture} alt="avatar" className="avatar" referrerPolicy="no-referrer" />}
           <span className="user-name">{name}</span>
           {saving && <span className="saving-badge">💾 Sauvegarde…</span>}

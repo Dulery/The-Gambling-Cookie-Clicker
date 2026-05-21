@@ -1017,6 +1017,91 @@ body {
   color: var(--accent, #f5c542);
 }
 
+/* ── Profile modal ────────────────────────── */
+.profile-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+.profile-modal {
+  background: var(--surface, #1e1e2e);
+  border: 1px solid var(--border, #2a2a3a);
+  border-radius: 14px;
+  padding: 1.75rem 2rem;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.profile-title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+}
+.profile-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  margin-bottom: 0.25rem;
+}
+.profile-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--text-muted, #888);
+  margin-top: 0.4rem;
+}
+.profile-input {
+  background: var(--bg, #13131f);
+  border: 1px solid var(--border, #2a2a3a);
+  border-radius: 8px;
+  color: inherit;
+  font-size: 1rem;
+  padding: 0.5rem 0.75rem;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+.profile-input:focus {
+  border-color: var(--accent, #f5c542);
+}
+.profile-email {
+  font-size: 0.9rem;
+  color: var(--text-muted, #888);
+  padding: 0.25rem 0;
+}
+.profile-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+.btn-profile-save {
+  flex: 1;
+  padding: 0.55rem 1rem;
+  border-radius: 8px;
+  border: none;
+  background: var(--accent, #f5c542);
+  color: #111;
+  font-weight: 700;
+  cursor: pointer;
+}
+.btn-profile-cancel {
+  padding: 0.55rem 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--border, #2a2a3a);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+.user-info:hover .user-name {
+  text-decoration: underline dotted;
+}
+
 
 
 .gamble-item {
