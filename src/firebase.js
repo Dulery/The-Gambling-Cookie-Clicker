@@ -25,7 +25,7 @@ export async function loadScore(userId) {
 }
 
 export async function getLeaderboard(maxResults = 50) {
-  const q = query(collection(db, 'scores'), orderBy('totalCookies', 'desc'), limit(maxResults))
+  const q = query(collection(db, 'scores'), orderBy('cookies', 'desc'), limit(maxResults))
   const snap = await getDocs(q)
   return snap.docs.map(d => ({ id: d.id, ...d.data() }))
 }
