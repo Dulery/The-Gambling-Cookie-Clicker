@@ -959,6 +959,66 @@ body {
   margin: 0.4rem 0 0.5rem 0.2rem;
 }
 
+/* ── Leaderboard ──────────────────────────── */
+.leaderboard {
+  padding: 1.25rem 1rem;
+  max-width: 540px;
+  margin: 0 auto;
+}
+.lb-title {
+  font-size: 1.4rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+.lb-loading {
+  text-align: center;
+  color: var(--text-muted, #888);
+  padding: 2rem 0;
+}
+.lb-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+.lb-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 1rem;
+  border-radius: 10px;
+  background: var(--surface, #1e1e2e);
+  border: 1px solid var(--border, #2a2a3a);
+  font-size: 0.95rem;
+}
+.lb-row.lb-me {
+  border-color: var(--accent, #f5c542);
+  background: rgba(245, 197, 66, 0.08);
+}
+.lb-rank {
+  min-width: 2rem;
+  font-weight: 700;
+  font-size: 1rem;
+  text-align: center;
+}
+.lb-name {
+  flex: 1;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lb-score {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  color: var(--accent, #f5c542);
+}
+
+
+
 .gamble-item {
   display: flex;
   align-items: center;

@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app'
-import { getFirestore, doc, setDoc, getDoc } from 'firebase/firestore'
+import { getFirestore, doc, setDoc, getDoc, collection, getDocs, query, orderBy, limit } from 'firebase/firestore'
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -22,4 +22,10 @@ export async function loadScore(userId) {
   const ref = doc(db, 'scores', userId)
   const snap = await getDoc(ref)
   return snap.exists() ? snap.data() : null
+}
+
+export async function getLeaderboard(maxResults = 50) {
+  const q = query(collection(db, 'scores'), orderBy('totalCookies', 'desc'), limit(maxResults))
+  const snap = await getDocs(q)
+  return snap.docs.map(d => ({ id: d.id, ...d.data() }))
 }

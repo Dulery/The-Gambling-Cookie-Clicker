@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { saveScore, loadScore } from './firebase.js'
+import { saveScore, loadScore, getLeaderboard } from './firebase.js'
 import Casino from './Casino.jsx'
 import Bank from './Bank.jsx'
 import Life, { getDefaultAssets } from './Life.jsx'
@@ -58,6 +58,8 @@ export default function Game({ user, onLogout }) {
   const [saving, setSaving]           = useState(false)
   const [floats, setFloats]           = useState([])
   const [tab, setTab]                 = useState('clicker')
+  const [leaderboard, setLeaderboard] = useState([])
+  const [lbLoading, setLbLoading]    = useState(false)
   const [loan, setLoan]               = useState(1000000)
   const [gambleResults, setGambleResults] = useState({})
   const [assets, setAssets]           = useState(getDefaultAssets)
@@ -157,6 +159,7 @@ export default function Game({ user, onLogout }) {
       setSaving(true)
       try {
         await saveScore(userId, {
+          displayName: user?.profile?.preferred_username || user?.profile?.name || user?.profile?.email || 'Joueur',
           cookies: cookiesRef.current,
           totalCookies: totalRef.current,
           owned: ownedRef.current,
@@ -172,6 +175,16 @@ export default function Game({ user, onLogout }) {
       }
     }, 4000)
   }
+
+  // Fetch leaderboard when tab changes to 'leaderboard'
+  useEffect(() => {
+    if (tab !== 'leaderboard') return
+    setLbLoading(true)
+    getLeaderboard(50)
+      .then(rows => setLeaderboard(rows))
+      .catch(err => console.error('Leaderboard error:', err))
+      .finally(() => setLbLoading(false))
+  }, [tab])
 
   const handleClick = (e) => {
     setCookies(c => c + cpc)
@@ -353,6 +366,9 @@ export default function Game({ user, onLogout }) {
         <button className={`game-tab ${tab === 'life' ? 'active' : ''}`} onClick={() => setTab('life')}>
           💼 Vie
         </button>
+        <button className={`game-tab ${tab === 'leaderboard' ? 'active' : ''}`} onClick={() => setTab('leaderboard')}>
+          🏆 Classement
+        </button>
       </nav>
 
       {/* Mental health bar */}
@@ -424,6 +440,29 @@ export default function Game({ user, onLogout }) {
             onSell={handleSellAsset}
             onBuy={handleBuyItem}
           />
+        ) : tab === 'leaderboard' ? (
+          <section className="leaderboard">
+            <h2 className="lb-title">🏆 Classement</h2>
+            {lbLoading ? (
+              <p className="lb-loading">Chargement…</p>
+            ) : leaderboard.length === 0 ? (
+              <p className="lb-loading">Aucun joueur trouvé.</p>
+            ) : (
+              <ol className="lb-list">
+                {leaderboard.map((row, i) => {
+                  const isMe = row.id === userId
+                  const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i + 1}.`
+                  return (
+                    <li key={row.id} className={`lb-row ${isMe ? 'lb-me' : ''}`}>
+                      <span className="lb-rank">{medal}</span>
+                      <span className="lb-name">{row.displayName || 'Joueur'}</span>
+                      <span className="lb-score">{fmt(row.totalCookies ?? 0)} 🍪</span>
+                    </li>
+                  )
+                })}
+              </ol>
+            )}
+          </section>
         ) : (
           <Bank cookies={cookies} loan={loan} onBorrow={handleBorrow} onRepay={handleRepay} />
         )}
