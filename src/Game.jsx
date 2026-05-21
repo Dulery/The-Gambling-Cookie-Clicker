@@ -5,12 +5,25 @@ import Bank from './Bank.jsx'
 import Life, { getDefaultAssets } from './Life.jsx'
 
 const UPGRADES = [
-  { id: 'cursor',  name: '🖱️ Cursor',   desc: '+1 cookie/sec',    baseCost: 150,    cps: 1    },
-  { id: 'grandma', name: '👵 Mamie',    desc: '+5 cookies/sec',   baseCost: 600,    cps: 5    },
-  { id: 'farm',    name: '🌾 Ferme',    desc: '+20 cookies/sec',  baseCost: 2500,   cps: 20   },
-  { id: 'mine',    name: '⛏️ Mine',     desc: '+100 cookies/sec', baseCost: 10000,  cps: 100  },
-  { id: 'factory', name: '🏭 Usine',    desc: '+500 cookies/sec', baseCost: 40000,  cps: 500  },
-  { id: 'portal',  name: '🌀 Portail',  desc: '+2k cookies/sec',  baseCost: 200000, cps: 2000 },
+  // ── Passifs ──
+  { id: 'cursor',    name: '🖱️ Cursor',       desc: '+1 cookie/sec',     baseCost: 150,       cps: 1       },
+  { id: 'grandma',   name: '👵 Mamie',         desc: '+5 cookies/sec',    baseCost: 600,       cps: 5       },
+  { id: 'farm',      name: '🌾 Ferme',         desc: '+20 cookies/sec',   baseCost: 2500,      cps: 20      },
+  { id: 'mine',      name: '⛏️ Mine',          desc: '+100 cookies/sec',  baseCost: 10000,     cps: 100     },
+  { id: 'factory',   name: '🏭 Usine',         desc: '+500 cookies/sec',  baseCost: 40000,     cps: 500     },
+  { id: 'portal',    name: '🌀 Portail',       desc: '+2k cookies/sec',   baseCost: 200000,    cps: 2000    },
+  { id: 'temple',    name: '🛕 Temple',        desc: '+10k cookies/sec',  baseCost: 1000000,   cps: 10000   },
+  { id: 'lab',       name: '🔬 Laboratoire',   desc: '+50k cookies/sec',  baseCost: 6000000,   cps: 50000   },
+  { id: 'spaceship', name: '🚀 Vaisseau',      desc: '+250k cookies/sec', baseCost: 35000000,  cps: 250000  },
+  { id: 'dimension', name: '🌌 Dimension',     desc: '+1M cookies/sec',   baseCost: 200000000, cps: 1000000 },
+  // ── Clic ──
+  { id: 'click1',    name: '👆 Coup de pouce', desc: '+2 cookies/clic',   baseCost: 100,       cpc: 2      },
+  { id: 'click2',    name: '💅 Doigt d\'or',   desc: '+10 cookies/clic',  baseCost: 600,       cpc: 10     },
+  { id: 'click3',    name: '🧤 Gant magique',  desc: '+50 cookies/clic',  baseCost: 3500,      cpc: 50     },
+  { id: 'click4',    name: '🔨 Marteau',       desc: '+200 cookies/clic', baseCost: 18000,     cpc: 200    },
+  { id: 'click5',    name: '👊 Poing d\'acier',desc: '+1k cookies/clic',  baseCost: 100000,    cpc: 1000   },
+  { id: 'click6',    name: '⚡ Laser',          desc: '+5k cookies/clic',  baseCost: 600000,    cpc: 5000   },
+  { id: 'click7',    name: '☄️ Météorite',     desc: '+25k cookies/clic', baseCost: 4000000,   cpc: 25000  },
 ]
 
 function getUpgradeCost(upgrade, owned) {
@@ -39,6 +52,7 @@ export default function Game({ user, onLogout }) {
   const [totalCookies, setTotal]      = useState(0)
   const [owned, setOwned]             = useState({})
   const [cps, setCps]                 = useState(0)
+  const [cpc, setCpc]                 = useState(1)
   const [clicking, setClicking]       = useState(false)
   const [loaded, setLoaded]           = useState(false)
   const [saving, setSaving]           = useState(false)
@@ -87,10 +101,12 @@ export default function Game({ user, onLogout }) {
       .finally(() => setLoaded(true))
   }, [userId])
 
-  // Recalculate CPS whenever upgrades change
+  // Recalculate CPS + CPC whenever upgrades change
   useEffect(() => {
-    const total = UPGRADES.reduce((sum, u) => sum + (owned[u.id] || 0) * u.cps, 0)
-    setCps(total)
+    const totalCps = UPGRADES.reduce((sum, u) => u.cps ? sum + (owned[u.id] || 0) * u.cps : sum, 0)
+    const totalCpc = UPGRADES.reduce((sum, u) => u.cpc ? sum + (owned[u.id] || 0) * u.cpc : sum, 0)
+    setCps(totalCps)
+    setCpc(1 + totalCpc)
   }, [owned])
 
   // Passive income loop
@@ -158,17 +174,17 @@ export default function Game({ user, onLogout }) {
   }
 
   const handleClick = (e) => {
-    setCookies(c => c + 1)
-    setTotal(t => t + 1)
+    setCookies(c => c + cpc)
+    setTotal(t => t + cpc)
     setClicking(true)
     setTimeout(() => setClicking(false), 100)
 
-    // Floating +1 animation
+    // Floating animation
     const rect = e.currentTarget.getBoundingClientRect()
     const x = e.clientX - rect.left
     const y = e.clientY - rect.top
     const id = Date.now() + Math.random()
-    setFloats(f => [...f, { id, x, y }])
+    setFloats(f => [...f, { id, x, y, value: cpc }])
     setTimeout(() => setFloats(f => f.filter(fl => fl.id !== id)), 900)
 
     scheduleSave()
@@ -368,6 +384,12 @@ export default function Game({ user, onLogout }) {
                 <span className="stat-label">par seconde</span>
               </div>
             )}
+            {cpc > 1 && (
+              <div className="stat">
+                <span className="stat-value">{fmt(cpc)}</span>
+                <span className="stat-label">par clic</span>
+              </div>
+            )}
             {loan > 0 && (
               <div className="stat">
                 <span className="stat-value stat-debt">{fmt(loan)}</span>
@@ -386,7 +408,7 @@ export default function Game({ user, onLogout }) {
                 className="float-text"
                 style={{ left: f.x, top: f.y }}
               >
-                +1
+                +{fmt(f.value)}
               </span>
             ))}
           </div>
@@ -409,7 +431,35 @@ export default function Game({ user, onLogout }) {
         {/* Upgrades panel */}
         <aside className="upgrades">
           <h2 className="upgrades-title">Améliorations</h2>
-          {UPGRADES.map(upgrade => {
+
+          <div className="upgrades-section-label">⏱️ Passif</div>
+          {UPGRADES.filter(u => u.cps).map(upgrade => {
+            const count     = owned[upgrade.id] || 0
+            const cost      = getUpgradeCost(upgrade, count)
+            const canAfford = cookies >= cost
+            return (
+              <button
+                key={upgrade.id}
+                className={`upgrade-item ${canAfford ? 'affordable' : 'expensive'}`}
+                onClick={() => buyUpgrade(upgrade)}
+                disabled={!canAfford}
+              >
+                <span className="upgrade-icon">{upgrade.name.split(' ')[0]}</span>
+                <div className="upgrade-info">
+                  <span className="upgrade-name">{upgrade.name.slice(upgrade.name.indexOf(' ') + 1)}</span>
+                  <span className="upgrade-desc">{upgrade.desc}</span>
+                </div>
+                <div className="upgrade-meta">
+                  <span className="upgrade-cost">{fmt(cost)} 🍪</span>
+                  {count > 0 && <span className="upgrade-count">×{count}</span>}
+                </div>
+              </button>
+            )
+          })}
+
+          <div className="upgrades-divider" />
+          <div className="upgrades-section-label">👆 Clic</div>
+          {UPGRADES.filter(u => u.cpc).map(upgrade => {
             const count     = owned[upgrade.id] || 0
             const cost      = getUpgradeCost(upgrade, count)
             const canAfford = cookies >= cost

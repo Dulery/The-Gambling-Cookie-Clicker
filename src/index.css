@@ -950,6 +950,15 @@ body {
   margin: 0.75rem 0;
 }
 
+.upgrades-section-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted, #888);
+  margin: 0.4rem 0 0.5rem 0.2rem;
+}
+
 .gamble-item {
   display: flex;
   align-items: center;
