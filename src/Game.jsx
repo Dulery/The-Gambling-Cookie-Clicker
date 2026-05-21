@@ -63,6 +63,7 @@ export default function Game({ user, onLogout }) {
   const [customName, setCustomName]  = useState('')
   const [profileOpen, setProfileOpen]= useState(false)
   const [editingName, setEditingName]= useState('')
+  const [savedEmail, setSavedEmail]  = useState('')
   const [loan, setLoan]               = useState(0)
   const [gambleResults, setGambleResults] = useState({})
   const [assets, setAssets]           = useState(getDefaultAssets)
@@ -101,6 +102,7 @@ export default function Game({ user, onLogout }) {
           setAssets({ ...getDefaultAssets(), ...(data.assets ?? {}) })
           setMentalHealth(data.mentalHealth ?? 100)
           if (data.displayName) setCustomName(data.displayName)
+          if (data.email) setSavedEmail(data.email)
         }
       })
       .catch(console.error)
@@ -164,6 +166,7 @@ export default function Game({ user, onLogout }) {
       try {
         await saveScore(userId, {
           displayName: customName || user?.profile?.preferred_username || user?.profile?.name || user?.profile?.email || 'Joueur',
+          email: user?.profile?.email || savedEmail || '',
           cookies: cookiesRef.current,
           totalCookies: totalRef.current,
           owned: ownedRef.current,
@@ -323,7 +326,7 @@ export default function Game({ user, onLogout }) {
 
   const picture = user?.profile?.picture
   const name    = customName || user?.profile?.name || user?.profile?.email || 'Joueur'
-  const email   = user?.profile?.email || ''
+  const email   = user?.profile?.email || savedEmail || ''
 
   const handleSaveName = () => {
     const trimmed = editingName.trim()

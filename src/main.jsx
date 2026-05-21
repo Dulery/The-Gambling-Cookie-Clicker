@@ -11,6 +11,7 @@ const oidcConfig = {
   redirect_uri: window.location.origin,
   post_logout_redirect_uri: window.location.origin,
   scope: 'openid profile email',
+  loadUserInfo: true,
   onSigninCallback: () => {
     window.history.replaceState({}, document.title, '/')
   },
