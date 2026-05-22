@@ -32,7 +32,7 @@ export default function Bank({ cookies, loan, onBorrow, onRepay }) {
         <div className={`bank-balance-card ${isNegative ? 'negative' : 'positive'}`}>
           <span className="bank-balance-label">Solde actuel</span>
           <span className="bank-balance-value">
-            {isInDebt ? '−' : '+'}{fmt(Math.abs(cookies))} 🍪
+            {isNegative ? '−' : '+'}{fmt(Math.abs(cookies))} 🍪
           </span>
           {isNegative && (
             <span className="bank-interest-note">⚠️ Solde négatif</span>
