@@ -139,7 +139,7 @@ export default function Game({ user, onLogout }) {
       loanRef.current = newLoan
 
       // Mental health penalty while in debt
-      setMentalHealth(mh => Math.max(0, mh - 2))
+      setMentalHealth(mh => Math.max(0, mh - 10))
       scheduleSave()
     }, 20000)
     return () => clearInterval(interval)

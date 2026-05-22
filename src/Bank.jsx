@@ -9,17 +9,13 @@ function fmt(n) {
   return Math.floor(n).toString()
 }
 
-const LOAN_OFFERS = [
-  { id: 'micro',    label: 'Micro-prêt',    icon: '🪙', amount: 500,   fee: 0.40 },
-  { id: 'standard', label: 'Prêt Standard', icon: '💳', amount: 2000,  fee: 0.65 },
-  { id: 'grand',    label: 'Grand Prêt',    icon: '💰', amount: 10000, fee: 1.00 },
-  { id: 'mega',     label: 'Méga Prêt',     icon: '🏛️', amount: 50000, fee: 1.80 },
-]
 
 const REPAY_AMOUNTS = [100, 500, 2000, 10000]
 
 export default function Bank({ cookies, loan, onBorrow, onRepay }) {
-  const isInDebt = cookies < 0
+  const isNegative      = cookies < 0
+  const emergencyAmount = isNegative ? Math.abs(cookies) : 0
+  const emergencyDebt   = Math.ceil(emergencyAmount * 1.25)
 
   return (
     <div className="bank">
@@ -33,12 +29,12 @@ export default function Bank({ cookies, loan, onBorrow, onRepay }) {
 
       {/* Status cards */}
       <div className="bank-status">
-        <div className={`bank-balance-card ${isInDebt ? 'negative' : 'positive'}`}>
+        <div className={`bank-balance-card ${isNegative ? 'negative' : 'positive'}`}>
           <span className="bank-balance-label">Solde actuel</span>
           <span className="bank-balance-value">
             {isInDebt ? '−' : '+'}{fmt(Math.abs(cookies))} 🍪
           </span>
-          {isInDebt && (
+          {isNegative && (
             <span className="bank-interest-note">⚠️ Solde négatif</span>
           )}
         </div>
@@ -56,48 +52,28 @@ export default function Bank({ cookies, loan, onBorrow, onRepay }) {
         <div className="bank-warning">
           ⚠️ Vous avez une dette de <strong>{fmt(loan)} 🍪</strong>.<br/>
           📈 +2% d’intérêts toutes les 20 secondes — la dette grossit si vous ne remboursez pas.<br/>
-          🧠 <strong>−2 de santé mentale</strong> à chaque tick d’intérêt — si votre santé mentale atteint 0, vous mourez et tout est perdu.
+          🧠 <strong>−10 de santé mentale</strong> à chaque tick d’intérêt — si votre santé mentale atteint 0, vous mourez et tout est perdu.
         </div>
       )}
 
-      {/* Borrow section */}
+            {/* Emergency loan */}
       <section className="bank-section">
-        <h3 className="bank-section-title">💳 Emprunter</h3>
-        <p className="bank-section-desc">
-          Les frais sont prélevés immédiatement sur la dette. Les intérêts s'appliquent ensuite.
-        </p>
-        <div className="bank-offers">
-          {LOAN_OFFERS.map(offer => {
-            const totalOwed = Math.ceil(offer.amount * (1 + offer.fee))
-            return (
-              <div key={offer.id} className="bank-offer">
-                <div className="bank-offer-header">
-                  <span className="bank-offer-icon">{offer.icon}</span>
-                  <div>
-                    <span className="bank-offer-name">{offer.label}</span>
-                    <span className="bank-offer-fee">+{Math.round(offer.fee * 100)}% frais</span>
-                  </div>
-                </div>
-                <div className="bank-offer-amounts">
-                  <span className="bank-offer-row">
-                    Vous recevez&nbsp;
-                    <strong className="green">+{fmt(offer.amount)} 🍪</strong>
-                  </span>
-                  <span className="bank-offer-row">
-                    Dette ajoutée&nbsp;
-                    <strong className="red">{fmt(totalOwed)} 🍪</strong>
-                  </span>
-                </div>
-                <button
-                  className="btn-borrow"
-                  onClick={() => onBorrow(offer.amount, totalOwed)}
-                >
-                  Emprunter
-                </button>
-              </div>
-            )
-          })}
-        </div>
+        <h3 className="bank-section-title">🚨 Prêt d’urgence</h3>
+        {isNegative ? (
+          <>
+            <p className="bank-section-desc">
+              Votre solde est de <strong className="red">−{fmt(emergencyAmount)} 🍪</strong>.<br/>
+              La banque peut vous remettre à zéro en contrepartie d’une dette de <strong className="red">{fmt(emergencyDebt)} 🍪</strong> (+25% de frais).
+            </p>
+            <button className="btn-borrow" onClick={() => onBorrow(emergencyAmount, emergencyDebt)}>
+              Contracter le prêt d’urgence (+{fmt(emergencyAmount)} 🍪)
+            </button>
+          </>
+        ) : (
+          <p className="bank-section-desc" style={{color: 'var(--text-muted)'}}>
+            ✅ Votre solde est positif, vous n’avez pas besoin d’un prêt.
+          </p>
+        )}
       </section>
 
       {/* Repay section */}
