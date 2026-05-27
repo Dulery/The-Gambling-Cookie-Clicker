@@ -11,8 +11,8 @@ function fmt(n) {
 // ── Slot Machine ──────────────────────────────────────────────────────────────
 
 const SYMBOLS = [
-  { sym: '🍪', weight: 6 },
-  { sym: '🍋', weight: 5 },
+  { sym: '🍪', weight: 8 },
+  { sym: '🍋', weight: 7 },
   { sym: '🔔', weight: 4 },
   { sym: '🎲', weight: 3 },
   { sym: '💎', weight: 2 },
@@ -349,9 +349,9 @@ function Blackjack({ cookies, onResult, onMentalChange }) {
 // win: true  → return bet × mult (net gain = bet × (mult-1))
 // win: false → lose bet × mult total (after bet already deducted, adjust by bet×(1-mult))
 const WHEEL_SEGS = [
-  { icon: '🍋', label: '×1.2',  win: true,  mult: 1.2, color: '#a16207', textColor: '#fff', weight: 5 },
+  { icon: '🍋', label: '×1.2',  win: true,  mult: 1.2, color: '#a16207', textColor: '#fff', weight: 7 },
   { icon: '😅', label: '-½×',   win: false, mult: 0.5, color: '#92400e', textColor: '#fed7aa', weight: 7 },
-  { icon: '🍪', label: '×1.7',  win: true,  mult: 1.7, color: '#15803d', textColor: '#fff', weight: 4 },
+  { icon: '🍪', label: '×1.7',  win: true,  mult: 1.7, color: '#15803d', textColor: '#fff', weight: 6 },
   { icon: '💸', label: '-1×',   win: false, mult: 1,   color: '#991b1b', textColor: '#fff', weight: 6 },
   { icon: '🔔', label: '×2.5',  win: true,  mult: 2.5, color: '#c2410c', textColor: '#fff', weight: 3 },
   { icon: '😬', label: '-1.5×', win: false, mult: 1.5, color: '#7f1d1d', textColor: '#fca5a5', weight: 5 },
