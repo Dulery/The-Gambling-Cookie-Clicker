@@ -29,13 +29,22 @@ function spinReel() {
 
 function getMultiplier(reels) {
   const [a, b, c] = reels
+  // Triple
   if (a === b && b === c) {
     if (a === '👑') return 18
     if (a === '💎') return 8
     if (a === '🎲') return 5
     if (a === '🔔') return 3
     if (a === '🍋') return 2
-    return 1.5
+    return 1.5  // 🍪×3
+  }
+  // Double (any two matching)
+  const pair = (a === b) ? a : (b === c) ? b : (a === c) ? a : null
+  if (pair) {
+    if (pair === '👑') return 3
+    if (pair === '💎') return 2
+    if (pair === '🎲') return 1.5
+    return 1.2  // 🔔, 🍋, 🍪 double → small refund-ish gain
   }
   return 0
 }
