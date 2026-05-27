@@ -116,9 +116,13 @@ function SlotMachine({ cookies, onResult, onMentalChange }) {
       </div>
 
       <div className="slot-payouts">
+        <strong style={{gridColumn:'1/-1',opacity:.6,fontSize:'.75rem'}}>— Triples —</strong>
         <span>👑×3 = ×18</span><span>💎×3 = ×8</span>
         <span>🎲×3 = ×5</span><span>🔔×3 = ×3</span>
         <span>🍋×3 = ×2</span><span>🍪×3 = ×1.5</span>
+        <strong style={{gridColumn:'1/-1',opacity:.6,fontSize:'.75rem'}}>— Doubles —</strong>
+        <span>👑×2 = ×3</span><span>💎×2 = ×2</span>
+        <span>🎲×2 = ×1.5</span><span>🔔/🍋/🍪×2 = ×1.2</span>
       </div>
 
       <button
