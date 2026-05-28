@@ -6,24 +6,40 @@ import Life, { getDefaultAssets } from './Life.jsx'
 
 const UPGRADES = [
   // ── Passifs ──
-  { id: 'cursor',    name: '🖱️ Cursor',       desc: '+1 cookie/sec',     baseCost: 150,       cps: 1       },
-  { id: 'grandma',   name: '👵 Mamie',         desc: '+5 cookies/sec',    baseCost: 600,       cps: 5       },
-  { id: 'farm',      name: '🌾 Ferme',         desc: '+20 cookies/sec',   baseCost: 2500,      cps: 20      },
-  { id: 'mine',      name: '⛏️ Mine',          desc: '+100 cookies/sec',  baseCost: 10000,     cps: 100     },
-  { id: 'factory',   name: '🏭 Usine',         desc: '+500 cookies/sec',  baseCost: 40000,     cps: 500     },
-  { id: 'portal',    name: '🌀 Portail',       desc: '+2k cookies/sec',   baseCost: 200000,    cps: 2000    },
-  { id: 'temple',    name: '🛕 Temple',        desc: '+10k cookies/sec',  baseCost: 1000000,   cps: 10000   },
-  { id: 'lab',       name: '🔬 Laboratoire',   desc: '+50k cookies/sec',  baseCost: 6000000,   cps: 50000   },
-  { id: 'spaceship', name: '🚀 Vaisseau',      desc: '+250k cookies/sec', baseCost: 35000000,  cps: 250000  },
-  { id: 'dimension', name: '🌌 Dimension',     desc: '+1M cookies/sec',   baseCost: 200000000, cps: 1000000 },
+  { id: 'cursor',    name: '🖱️ Cursor',          desc: '+1 cookie/sec',     baseCost: 150,        cps: 1,       requiredTier: 0 },
+  { id: 'grandma',   name: '👵 Mamie',            desc: '+5 cookies/sec',    baseCost: 600,        cps: 5,       requiredTier: 1 },
+  { id: 'farm',      name: '🌾 Ferme',            desc: '+20 cookies/sec',   baseCost: 2500,       cps: 20,      requiredTier: 2 },
+  { id: 'mine',      name: '⛏️ Mine',             desc: '+100 cookies/sec',  baseCost: 10000,      cps: 100,     requiredTier: 3 },
+  { id: 'factory',   name: '🏭 Usine',            desc: '+500 cookies/sec',  baseCost: 40000,      cps: 500,     requiredTier: 4 },
+  { id: 'portal',    name: '🌀 Portail',          desc: '+2k cookies/sec',   baseCost: 200000,     cps: 2000,    requiredTier: 5 },
+  { id: 'temple',    name: '🛕 Temple',           desc: '+10k cookies/sec',  baseCost: 1000000,    cps: 10000,   requiredTier: 6 },
+  { id: 'lab',       name: '🔬 Laboratoire',      desc: '+50k cookies/sec',  baseCost: 6000000,    cps: 50000,   requiredTier: 7 },
+  { id: 'spaceship', name: '🚀 Vaisseau',         desc: '+250k cookies/sec', baseCost: 35000000,   cps: 250000,  requiredTier: 8 },
+  { id: 'dimension', name: '🌌 Dimension',        desc: '+1M cookies/sec',   baseCost: 200000000,  cps: 1000000, requiredTier: 9 },
   // ── Clic ──
-  { id: 'click1',    name: '👆 Coup de pouce', desc: '+2 cookies/clic',   baseCost: 100,       cpc: 2      },
-  { id: 'click2',    name: '💅 Doigt d\'or',   desc: '+10 cookies/clic',  baseCost: 600,       cpc: 10     },
-  { id: 'click3',    name: '🧤 Gant magique',  desc: '+50 cookies/clic',  baseCost: 3500,      cpc: 50     },
-  { id: 'click4',    name: '🔨 Marteau',       desc: '+200 cookies/clic', baseCost: 18000,     cpc: 200    },
-  { id: 'click5',    name: '👊 Poing d\'acier',desc: '+1k cookies/clic',  baseCost: 100000,    cpc: 1000   },
-  { id: 'click6',    name: '⚡ Laser',          desc: '+5k cookies/clic',  baseCost: 600000,    cpc: 5000   },
-  { id: 'click7',    name: '☄️ Météorite',     desc: '+25k cookies/clic', baseCost: 4000000,   cpc: 25000  },
+  { id: 'click1',    name: '👆 Coup de pouce',    desc: '+2 cookies/clic',    baseCost: 100,        cpc: 2,       requiredTier: 0 },
+  { id: 'click2',    name: '💅 Doigt d\'or',      desc: '+10 cookies/clic',   baseCost: 600,        cpc: 10,      requiredTier: 1 },
+  { id: 'click3',    name: '🧤 Gant magique',     desc: '+50 cookies/clic',   baseCost: 3500,       cpc: 50,      requiredTier: 2 },
+  { id: 'click4',    name: '🔨 Marteau',          desc: '+200 cookies/clic',  baseCost: 18000,      cpc: 200,     requiredTier: 3 },
+  { id: 'click5',    name: '👊 Poing d\'acier',   desc: '+1k cookies/clic',   baseCost: 100000,     cpc: 1000,    requiredTier: 4 },
+  { id: 'click6',    name: '⚡ Laser',             desc: '+5k cookies/clic',   baseCost: 600000,     cpc: 5000,    requiredTier: 5 },
+  { id: 'click7',    name: '☄️ Météorite',        desc: '+25k cookies/clic',  baseCost: 4000000,    cpc: 25000,   requiredTier: 6 },
+  { id: 'click8',    name: '🌟 Supernova',         desc: '+150k cookies/clic', baseCost: 25000000,   cpc: 150000,  requiredTier: 7 },
+  { id: 'click9',    name: '🧬 Manipulation ADN',  desc: '+750k cookies/clic', baseCost: 200000000,  cpc: 750000,  requiredTier: 8 },
+  { id: 'click10',   name: '🔮 Maîtrise cosmique', desc: '+4M cookies/clic',   baseCost: 2000000000, cpc: 4000000, requiredTier: 9 },
+]
+
+const TIERS = [
+  { id: 0, name: 'Cabane en bois',        icon: '🪵', cost: 0            },
+  { id: 1, name: 'Petite maison',          icon: '🏠', cost: 500          },
+  { id: 2, name: 'Maison de famille',      icon: '🏡', cost: 5000         },
+  { id: 3, name: 'Appartement',            icon: '🏢', cost: 50000        },
+  { id: 4, name: 'Commerce',               icon: '🏬', cost: 500000       },
+  { id: 5, name: 'Usine',                  icon: '🏭', cost: 5000000      },
+  { id: 6, name: 'Château',               icon: '🏰', cost: 50000000     },
+  { id: 7, name: 'Gratte-ciel',            icon: '🏙️', cost: 500000000    },
+  { id: 8, name: 'Station spatiale',       icon: '🌌', cost: 5000000000   },
+  { id: 9, name: 'Complexe dimensionnel',  icon: '🌀', cost: 50000000000  },
 ]
 
 function getUpgradeCost(upgrade, owned) {
@@ -70,6 +86,7 @@ export default function Game({ user, onLogout }) {
   const [dead, setDead]               = useState(false)
   const [deathCause, setDeathCause]   = useState(null)
   const [mentalHealth, setMentalHealth] = useState(100)
+  const [tier,         setTier]         = useState(0)
 
   const cookiesRef      = useRef(0)
   const totalRef        = useRef(0)
@@ -77,6 +94,7 @@ export default function Game({ user, onLogout }) {
   const loanRef         = useRef(0)
   const assetsRef       = useRef(getDefaultAssets())
   const mentalRef       = useRef(100)
+  const tierRef         = useRef(0)
   const saveTimer       = useRef(null)
 
   const userId = user?.profile?.sub
@@ -88,6 +106,7 @@ export default function Game({ user, onLogout }) {
   useEffect(() => { loanRef.current = loan }, [loan])
   useEffect(() => { assetsRef.current = assets }, [assets])
   useEffect(() => { mentalRef.current = mentalHealth }, [mentalHealth])
+  useEffect(() => { tierRef.current = tier }, [tier])
 
   // Load save from Firebase
   useEffect(() => {
@@ -101,6 +120,7 @@ export default function Game({ user, onLogout }) {
           setLoan(data.loan ?? 0)
           setAssets({ ...getDefaultAssets(), ...(data.assets ?? {}) })
           setMentalHealth(data.mentalHealth ?? 100)
+          setTier(data.tier ?? 0)
           if (data.displayName) setCustomName(data.displayName)
           if (data.email) setSavedEmail(data.email)
         }
@@ -177,6 +197,7 @@ export default function Game({ user, onLogout }) {
           loan: loanRef.current,
           assets: assetsRef.current,
           mentalHealth: mentalRef.current,
+          tier: tierRef.current,
           savedAt: new Date().toISOString(),
         })
       } catch (e) {
@@ -223,6 +244,15 @@ export default function Game({ user, onLogout }) {
     scheduleSave()
   }
 
+  const buyTier = () => {
+    if (tier >= TIERS.length - 1) return
+    const next = TIERS[tier + 1]
+    if (cookies < next.cost) return
+    setCookies(c => c - next.cost)
+    setTier(t => t + 1)
+    scheduleSave()
+  }
+
   const handleCasinoResult = (delta) => {
     setCookies(c => c + delta)
     scheduleSave()
@@ -266,11 +296,12 @@ export default function Game({ user, onLogout }) {
     setLoan(0)
     setAssets(getDefaultAssets())
     setMentalHealth(100)
+    setTier(0)
     setDead(true)
     if (userId) {
       saveScore(userId, {
         cookies: 0, totalCookies: 0, owned: {}, loan: 0,
-        assets: getDefaultAssets(), mentalHealth: 100,
+        assets: getDefaultAssets(), mentalHealth: 100, tier: 0,
         savedAt: new Date().toISOString(),
       }).catch(console.error)
     }
@@ -521,26 +552,55 @@ export default function Game({ user, onLogout }) {
         <aside className="upgrades">
           <h2 className="upgrades-title">Améliorations</h2>
 
+          {/* Palier */}
+          <div className="tier-panel">
+            <div className="tier-current">
+              <span className="tier-icon-big">{TIERS[tier].icon}</span>
+              <div>
+                <div className="tier-label-small">Palier actuel</div>
+                <div className="tier-name-text">{TIERS[tier].name}</div>
+              </div>
+            </div>
+            {tier < TIERS.length - 1 ? (
+              <button
+                className={`tier-buy-btn ${cookies >= TIERS[tier + 1].cost ? 'affordable' : 'expensive'}`}
+                onClick={buyTier}
+                disabled={cookies < TIERS[tier + 1].cost}
+              >
+                <span>{TIERS[tier + 1].icon} {TIERS[tier + 1].name}</span>
+                <span className="tier-buy-cost">{fmt(TIERS[tier + 1].cost)} 🍪</span>
+              </button>
+            ) : (
+              <div className="tier-max">🌟 Palier maximum atteint !</div>
+            )}
+          </div>
+
           <div className="upgrades-section-label">⏱️ Passif</div>
           {UPGRADES.filter(u => u.cps).map(upgrade => {
             const count     = owned[upgrade.id] || 0
             const cost      = getUpgradeCost(upgrade, count)
             const canAfford = cookies >= cost
+            const isLocked  = (upgrade.requiredTier ?? 0) > tier
             return (
               <button
                 key={upgrade.id}
-                className={`upgrade-item ${canAfford ? 'affordable' : 'expensive'}`}
-                onClick={() => buyUpgrade(upgrade)}
-                disabled={!canAfford}
+                className={`upgrade-item ${isLocked ? 'locked' : canAfford ? 'affordable' : 'expensive'}`}
+                onClick={() => !isLocked && buyUpgrade(upgrade)}
+                disabled={!canAfford || isLocked}
               >
                 <span className="upgrade-icon">{upgrade.name.split(' ')[0]}</span>
                 <div className="upgrade-info">
                   <span className="upgrade-name">{upgrade.name.slice(upgrade.name.indexOf(' ') + 1)}</span>
-                  <span className="upgrade-desc">{upgrade.desc}</span>
+                  <span className="upgrade-desc">
+                    {isLocked
+                      ? `🔒 ${TIERS[upgrade.requiredTier].icon} ${TIERS[upgrade.requiredTier].name} requis`
+                      : upgrade.desc}
+                  </span>
                 </div>
                 <div className="upgrade-meta">
-                  <span className="upgrade-cost">{fmt(cost)} 🍪</span>
-                  {count > 0 && <span className="upgrade-count">×{count}</span>}
+                  {isLocked
+                    ? <span className="upgrade-lock">🔒</span>
+                    : <><span className="upgrade-cost">{fmt(cost)} 🍪</span>{count > 0 && <span className="upgrade-count">×{count}</span>}</>}
                 </div>
               </button>
             )
@@ -552,21 +612,27 @@ export default function Game({ user, onLogout }) {
             const count     = owned[upgrade.id] || 0
             const cost      = getUpgradeCost(upgrade, count)
             const canAfford = cookies >= cost
+            const isLocked  = (upgrade.requiredTier ?? 0) > tier
             return (
               <button
                 key={upgrade.id}
-                className={`upgrade-item ${canAfford ? 'affordable' : 'expensive'}`}
-                onClick={() => buyUpgrade(upgrade)}
-                disabled={!canAfford}
+                className={`upgrade-item ${isLocked ? 'locked' : canAfford ? 'affordable' : 'expensive'}`}
+                onClick={() => !isLocked && buyUpgrade(upgrade)}
+                disabled={!canAfford || isLocked}
               >
                 <span className="upgrade-icon">{upgrade.name.split(' ')[0]}</span>
                 <div className="upgrade-info">
                   <span className="upgrade-name">{upgrade.name.slice(upgrade.name.indexOf(' ') + 1)}</span>
-                  <span className="upgrade-desc">{upgrade.desc}</span>
+                  <span className="upgrade-desc">
+                    {isLocked
+                      ? `🔒 ${TIERS[upgrade.requiredTier].icon} ${TIERS[upgrade.requiredTier].name} requis`
+                      : upgrade.desc}
+                  </span>
                 </div>
                 <div className="upgrade-meta">
-                  <span className="upgrade-cost">{fmt(cost)} 🍪</span>
-                  {count > 0 && <span className="upgrade-count">×{count}</span>}
+                  {isLocked
+                    ? <span className="upgrade-lock">🔒</span>
+                    : <><span className="upgrade-cost">{fmt(cost)} 🍪</span>{count > 0 && <span className="upgrade-count">×{count}</span>}</>}
                 </div>
               </button>
             )

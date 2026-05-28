@@ -1952,3 +1952,82 @@ body {
   flex-direction: column;
   gap: 0.5rem;
 }
+
+/* ── Tier panel ──────────────────────────────── */
+.tier-panel {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 10px;
+  padding: 0.7rem 0.75rem;
+  margin-bottom: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.tier-current {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+.tier-icon-big {
+  font-size: 1.9rem;
+  line-height: 1;
+}
+.tier-label-small {
+  font-size: 0.63rem;
+  color: var(--text-muted, #888);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.tier-name-text {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #f5deb3;
+}
+.tier-buy-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.45rem 0.7rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.05);
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: #fff;
+  transition: background 0.15s;
+}
+.tier-buy-btn.affordable {
+  border-color: #4ade80;
+  background: rgba(74,222,128,0.1);
+  color: #4ade80;
+}
+.tier-buy-btn.affordable:hover {
+  background: rgba(74,222,128,0.18);
+}
+.tier-buy-btn.expensive {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.tier-buy-cost {
+  font-size: 0.8rem;
+  opacity: 0.85;
+}
+.tier-max {
+  text-align: center;
+  font-size: 0.85rem;
+  color: gold;
+  padding: 0.2rem 0;
+}
+/* Locked upgrades */
+.upgrade-item.locked {
+  opacity: 0.4;
+  cursor: not-allowed !important;
+  background: rgba(255,255,255,0.02) !important;
+  border-color: rgba(255,255,255,0.05) !important;
+  filter: grayscale(0.6);
+}
+.upgrade-lock {
+  font-size: 1rem;
+}
