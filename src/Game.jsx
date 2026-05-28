@@ -766,9 +766,7 @@ export default function Game({ user, onLogout }) {
                     <li key={row.id} className={`lb-row ${isMe ? 'lb-me' : ''}`}>
                       <span className="lb-rank">{medal}</span>
                       <span className="lb-name">{row.displayName || 'Joueur'}</span>
-                      {row.tier != null && TIERS[row.tier] && (
-                        <span className="lb-tier">{TIERS[row.tier].icon} {TIERS[row.tier].name}</span>
-                      )}
+                      {(() => { const t = TIERS[row.tier ?? 0]; return t && <span className="lb-tier">{t.icon} {t.name}</span>; })()}
                       <span className="lb-score">{fmt(row.cookies ?? 0)} 🍪</span>
                     </li>
                   )
