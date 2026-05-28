@@ -4,60 +4,259 @@ import Casino from './Casino.jsx'
 import Bank from './Bank.jsx'
 import Life, { getDefaultAssets } from './Life.jsx'
 
-const UPGRADES = [
-  // ── Passifs ──
-  // Tier 0
-  { id: 'cursor',     name: '🖱️ Cursor',               desc: '+1 cookie/sec',       baseCost: 150,           cps: 1,        requiredTier: 0 },
-  { id: 'mulot',      name: '🐁 Mulot mécanique',       desc: '+4 cookies/sec',      baseCost: 500,           cps: 4,        requiredTier: 0 },
-  { id: 'grimoire',   name: '📜 Vieux grimoire',         desc: '+12 cookies/sec',     baseCost: 1500,          cps: 12,       requiredTier: 0 },
-  // Tier 1
-  { id: 'grandma',    name: '👵 Mamie',                  desc: '+5 cookies/sec',      baseCost: 600,           cps: 5,        requiredTier: 1 },
-  { id: 'chef',       name: '🧑‍🍳 Cuisinier',            desc: '+18 cookies/sec',     baseCost: 3000,          cps: 18,       requiredTier: 1 },
-  { id: 'potager',    name: '🌻 Potager',                desc: '+55 cookies/sec',     baseCost: 10000,         cps: 55,       requiredTier: 1 },
-  // Tier 2
-  { id: 'farm',       name: '🌾 Ferme',                  desc: '+20 cookies/sec',     baseCost: 2500,          cps: 20,       requiredTier: 2 },
-  { id: 'elevage',    name: '🐄 Élevage',                desc: '+80 cookies/sec',     baseCost: 15000,         cps: 80,       requiredTier: 2 },
-  { id: 'chantier',   name: '🏗️ Chantier',               desc: '+250 cookies/sec',    baseCost: 70000,         cps: 250,      requiredTier: 2 },
-  // Tier 3
-  { id: 'mine',       name: '⛏️ Mine',                   desc: '+100 cookies/sec',    baseCost: 10000,         cps: 100,      requiredTier: 3 },
-  { id: 'puits',      name: '🛢️ Puits de pétrole',       desc: '+400 cookies/sec',    baseCost: 100000,        cps: 400,      requiredTier: 3 },
-  { id: 'atelier',    name: '⚙️ Atelier industriel',     desc: '+1200 cookies/sec',   baseCost: 700000,        cps: 1200,     requiredTier: 3 },
-  // Tier 4
-  { id: 'factory',    name: '🏭 Usine',                  desc: '+500 cookies/sec',    baseCost: 40000,         cps: 500,      requiredTier: 4 },
-  { id: 'centrale',   name: '🔋 Centrale électrique',    desc: '+2000 cookies/sec',   baseCost: 1500000,       cps: 2000,     requiredTier: 4 },
-  { id: 'robot',      name: '🤖 Labo robotique',          desc: '+7000 cookies/sec',   baseCost: 12000000,      cps: 7000,     requiredTier: 4 },
-  // Tier 5
-  { id: 'portal',     name: '🚪 Portail',                desc: '+2000 cookies/sec',   baseCost: 200000,        cps: 2000,     requiredTier: 5 },
-  { id: 'telescope',  name: '🔭 Observatoire',           desc: '+12k cookies/sec',    baseCost: 15000000,      cps: 12000,    requiredTier: 5 },
-  { id: 'superpc',    name: '💻 Superordinateur',         desc: '+40k cookies/sec',    baseCost: 100000000,     cps: 40000,    requiredTier: 5 },
-  // Tier 6
-  { id: 'temple',     name: '🛕 Temple',                 desc: '+10k cookies/sec',    baseCost: 1000000,       cps: 10000,    requiredTier: 6 },
-  { id: 'nexus',      name: '🌠 Nexus cosmique',          desc: '+70k cookies/sec',    baseCost: 200000000,     cps: 70000,    requiredTier: 6 },
-  { id: 'alchimie',   name: '⚗️ Alchimiste',             desc: '+250k cookies/sec',   baseCost: 2000000000,    cps: 250000,   requiredTier: 6 },
-  // Tier 7
-  { id: 'lab',        name: '🔬 Laboratoire',             desc: '+50k cookies/sec',    baseCost: 6000000,       cps: 50000,    requiredTier: 7 },
-  { id: 'nucleaire',  name: '☢️ Réacteur nucléaire',      desc: '+400k cookies/sec',   baseCost: 5000000000,    cps: 400000,   requiredTier: 7 },
-  { id: 'maree',      name: '🌊 Générateur de marée',     desc: '+1.5M cookies/sec',   baseCost: 40000000000,   cps: 1500000,  requiredTier: 7 },
-  // Tier 8
-  { id: 'spaceship',  name: '🚀 Vaisseau',                desc: '+250k cookies/sec',   baseCost: 35000000,      cps: 250000,   requiredTier: 8 },
-  { id: 'flotte',     name: '🛸 Flotte galactique',       desc: '+3M cookies/sec',     baseCost: 20000000000,   cps: 3000000,  requiredTier: 8 },
-  { id: 'etoile',     name: '⭐ Étoile artificielle',     desc: '+10M cookies/sec',    baseCost: 300000000000,  cps: 10000000, requiredTier: 8 },
-  // Tier 9
-  { id: 'dimension',  name: '🌌 Dimension',               desc: '+1M cookies/sec',     baseCost: 200000000,     cps: 1000000,  requiredTier: 9 },
-  { id: 'singularity',name: '💫 Singularité',             desc: '+20M cookies/sec',    baseCost: 500000000000,  cps: 20000000, requiredTier: 9 },
-  { id: 'conscience', name: '🔮 Conscience universelle',  desc: '+70M cookies/sec',    baseCost: 5000000000000, cps: 70000000, requiredTier: 9 },
-  // ── Clic ──
-  { id: 'click1',    name: '👆 Coup de pouce',    desc: '+2 cookies/clic',    baseCost: 100,        cpc: 2,       requiredTier: 0 },
-  { id: 'click2',    name: '💅 Doigt d\'or',      desc: '+10 cookies/clic',   baseCost: 600,        cpc: 10,      requiredTier: 1 },
-  { id: 'click3',    name: '🧤 Gant magique',     desc: '+50 cookies/clic',   baseCost: 3500,       cpc: 50,      requiredTier: 2 },
-  { id: 'click4',    name: '🔨 Marteau',          desc: '+200 cookies/clic',  baseCost: 18000,      cpc: 200,     requiredTier: 3 },
-  { id: 'click5',    name: '👊 Poing d\'acier',   desc: '+1k cookies/clic',   baseCost: 100000,     cpc: 1000,    requiredTier: 4 },
-  { id: 'click6',    name: '⚡ Laser',             desc: '+5k cookies/clic',   baseCost: 600000,     cpc: 5000,    requiredTier: 5 },
-  { id: 'click7',    name: '☄️ Météorite',        desc: '+25k cookies/clic',  baseCost: 4000000,    cpc: 25000,   requiredTier: 6 },
-  { id: 'click8',    name: '🌟 Supernova',         desc: '+150k cookies/clic', baseCost: 25000000,   cpc: 150000,  requiredTier: 7 },
-  { id: 'click9',    name: '🧬 Manipulation ADN',  desc: '+750k cookies/clic', baseCost: 200000000,  cpc: 750000,  requiredTier: 8 },
-  { id: 'click10',   name: '🔮 Maîtrise cosmique', desc: '+4M cookies/clic',   baseCost: 2000000000, cpc: 4000000, requiredTier: 9 },
+
+// ── Upgrades par palier (10 passifs + 10 clics chacun) ───────────────────────
+const _TIER_PASSIVES = [
+  /* T0 – Cabane */ [
+    { id:'pas_0_0', name:'🖱️ Curseur',              desc:'+1/sec',      cps:1,          baseCost:50        },
+    { id:'pas_0_1', name:'🐭 Souris mécanique',     desc:'+2/sec',      cps:2,          baseCost:120       },
+    { id:'pas_0_2', name:'📜 Grimoire',              desc:'+4/sec',      cps:4,          baseCost:280       },
+    { id:'pas_0_3', name:'🕯️ Chandelle',            desc:'+7/sec',      cps:7,          baseCost:500       },
+    { id:'pas_0_4', name:'🪨 Pierre à feu',          desc:'+12/sec',     cps:12,         baseCost:750       },
+    { id:'pas_0_5', name:'🪵 Bûchers',               desc:'+20/sec',     cps:20,         baseCost:1000      },
+    { id:'pas_0_6', name:'🪤 Piège artisanal',       desc:'+30/sec',     cps:30,         baseCost:1200      },
+    { id:'pas_0_7', name:'🧺 Panier tressé',         desc:'+45/sec',     cps:45,         baseCost:1400      },
+    { id:'pas_0_8', name:'🌿 Herbes médicinales',    desc:'+65/sec',     cps:65,         baseCost:1600      },
+    { id:'pas_0_9', name:'🍯 Ruche sauvage',         desc:'+90/sec',     cps:90,         baseCost:1800      },
+  ],
+  /* T1 – Petite maison */ [
+    { id:'pas_1_0', name:'👵 Mamie',                 desc:'+5/sec',      cps:5,          baseCost:600       },
+    { id:'pas_1_1', name:'🧑‍🍳 Cuisinier',           desc:'+12/sec',     cps:12,         baseCost:1500      },
+    { id:'pas_1_2', name:'🌻 Jardin',                desc:'+25/sec',     cps:25,         baseCost:3500      },
+    { id:'pas_1_3', name:'🐓 Poulailler',             desc:'+45/sec',     cps:45,         baseCost:6000      },
+    { id:'pas_1_4', name:'🐑 Bergerie',               desc:'+70/sec',     cps:70,         baseCost:9000      },
+    { id:'pas_1_5', name:'🍎 Verger',                 desc:'+100/sec',    cps:100,        baseCost:12000     },
+    { id:'pas_1_6', name:'🧀 Fromagerie',             desc:'+145/sec',    cps:145,        baseCost:15500     },
+    { id:'pas_1_7', name:'🍞 Boulangerie',            desc:'+200/sec',    cps:200,        baseCost:18500     },
+    { id:'pas_1_8', name:'🏪 Épicerie',               desc:'+270/sec',    cps:270,        baseCost:21500     },
+    { id:'pas_1_9', name:'🛒 Marché local',           desc:'+360/sec',    cps:360,        baseCost:24000     },
+  ],
+  /* T2 – Maison de famille */ [
+    { id:'pas_2_0', name:'🌾 Ferme',                 desc:'+20/sec',     cps:20,         baseCost:2500      },
+    { id:'pas_2_1', name:'🐄 Élevage',               desc:'+60/sec',     cps:60,         baseCost:8000      },
+    { id:'pas_2_2', name:'🏗️ Chantier',               desc:'+120/sec',    cps:120,        baseCost:20000     },
+    { id:'pas_2_3', name:'🚜 Tracteur',               desc:'+220/sec',    cps:220,        baseCost:45000     },
+    { id:'pas_2_4', name:'🌽 Silo à grain',           desc:'+380/sec',    cps:380,        baseCost:80000     },
+    { id:'pas_2_5', name:'💧 Irrigation',             desc:'+600/sec',    cps:600,        baseCost:120000    },
+    { id:'pas_2_6', name:'🌱 Serre hydroponique',     desc:'+900/sec',    cps:900,        baseCost:160000    },
+    { id:'pas_2_7', name:'🐖 Porcherie industrielle', desc:'+1300/sec',   cps:1300,       baseCost:200000    },
+    { id:'pas_2_8', name:'🥛 Laiterie coopérative',  desc:'+1800/sec',   cps:1800,       baseCost:245000    },
+    { id:'pas_2_9', name:'🌿 Labo végétal',           desc:'+2500/sec',   cps:2500,       baseCost:290000    },
+  ],
+  /* T3 – Appartement */ [
+    { id:'pas_3_0', name:'⛏️ Mine',                  desc:'+100/sec',    cps:100,        baseCost:10000     },
+    { id:'pas_3_1', name:'🛢️ Puits de pétrole',      desc:'+280/sec',    cps:280,        baseCost:45000     },
+    { id:'pas_3_2', name:'⚙️ Atelier mécanique',     desc:'+550/sec',    cps:550,        baseCost:110000    },
+    { id:'pas_3_3', name:'🔩 Fonderie',               desc:'+1000/sec',   cps:1000,       baseCost:250000    },
+    { id:'pas_3_4', name:'⛽ Raffinerie',             desc:'+1800/sec',   cps:1800,       baseCost:500000    },
+    { id:'pas_3_5', name:'🏗️ Infrastructure lourde',  desc:'+3000/sec',   cps:3000,       baseCost:900000    },
+    { id:'pas_3_6', name:'🚂 Réseau ferroviaire',     desc:'+5000/sec',   cps:5000,       baseCost:1500000   },
+    { id:'pas_3_7', name:'⚡ Centrale mécanique',    desc:'+8000/sec',   cps:8000,       baseCost:2200000   },
+    { id:'pas_3_8', name:'🏙️ Zone industrielle',      desc:'+12000/sec',  cps:12000,      baseCost:3000000   },
+    { id:'pas_3_9', name:'🌆 Mégapole',               desc:'+18000/sec',  cps:18000,      baseCost:3800000   },
+  ],
+  /* T4 – Commerce */ [
+    { id:'pas_4_0', name:'🏭 Usine',                 desc:'+500/sec',    cps:500,        baseCost:40000     },
+    { id:'pas_4_1', name:'🔋 Centrale électrique',   desc:'+1500/sec',   cps:1500,       baseCost:300000    },
+    { id:'pas_4_2', name:'🤖 Robot industriel',       desc:'+4000/sec',   cps:4000,       baseCost:1200000   },
+    { id:'pas_4_3', name:'🏦 Banque de cookies',      desc:'+9000/sec',   cps:9000,       baseCost:4000000   },
+    { id:'pas_4_4', name:'📡 Réseau satellite',       desc:'+18000/sec',  cps:18000,      baseCost:10000000  },
+    { id:'pas_4_5', name:'🚢 Cargo maritime',         desc:'+33000/sec',  cps:33000,      baseCost:20000000  },
+    { id:'pas_4_6', name:'✈️ Flotte aérienne',        desc:'+55000/sec',  cps:55000,      baseCost:32000000  },
+    { id:'pas_4_7', name:'🏙️ Zone commerciale',       desc:'+85000/sec',  cps:85000,      baseCost:43000000  },
+    { id:'pas_4_8', name:'🌐 Réseau mondial',         desc:'+130K/sec',   cps:130000,     baseCost:52000000  },
+    { id:'pas_4_9', name:'💰 Empire économique',      desc:'+190K/sec',   cps:190000,     baseCost:59000000  },
+  ],
+  /* T5 – Usine */ [
+    { id:'pas_5_0', name:'🚪 Portail',                desc:'+2000/sec',   cps:2000,       baseCost:200000    },
+    { id:'pas_5_1', name:'🔭 Observatoire',           desc:'+8000/sec',   cps:8000,       baseCost:3000000   },
+    { id:'pas_5_2', name:'💻 Supercalculateur',        desc:'+22000/sec',  cps:22000,      baseCost:12000000  },
+    { id:'pas_5_3', name:'⚛️ Réacteur plasma',         desc:'+55000/sec',  cps:55000,      baseCost:40000000  },
+    { id:'pas_5_4', name:'🧪 Labo biotech',            desc:'+120K/sec',   cps:120000,     baseCost:100000000 },
+    { id:'pas_5_5', name:'🛰️ Réseau de satellites',   desc:'+250K/sec',   cps:250000,     baseCost:230000000 },
+    { id:'pas_5_6', name:'🕳️ Accélérateur',           desc:'+500K/sec',   cps:500000,     baseCost:420000000 },
+    { id:'pas_5_7', name:'🧬 Ingénierie génétique',   desc:'+900K/sec',   cps:900000,     baseCost:610000000 },
+    { id:'pas_5_8', name:'🌋 Énergie géothermique',   desc:'+1.5M/sec',   cps:1500000,    baseCost:770000000 },
+    { id:'pas_5_9', name:'🌐 Méga-internet quantique', desc:'+2.4M/sec',  cps:2400000,    baseCost:880000000 },
+  ],
+  /* T6 – Château */ [
+    { id:'pas_6_0', name:'🛕 Temple antique',         desc:'+10K/sec',    cps:10000,      baseCost:1000000   },
+    { id:'pas_6_1', name:'🌠 Nexus cosmique',          desc:'+40K/sec',    cps:40000,      baseCost:15000000  },
+    { id:'pas_6_2', name:'⚗️ Alchimiste légendaire',  desc:'+120K/sec',   cps:120000,     baseCost:70000000  },
+    { id:'pas_6_3', name:'🔯 Artefact sacré',          desc:'+320K/sec',   cps:320000,     baseCost:250000000 },
+    { id:'pas_6_4', name:'🌒 Lune ensorcelée',         desc:'+750K/sec',   cps:750000,     baseCost:700000000 },
+    { id:'pas_6_5', name:'🧿 Cristal cosmique',        desc:'+1.8M/sec',   cps:1800000,    baseCost:2000000000},
+    { id:'pas_6_6', name:'🎇 Étoile enchanteresse',   desc:'+4M/sec',     cps:4000000,    baseCost:5000000000},
+    { id:'pas_6_7', name:'🏰 Citadelle éternelle',     desc:'+9M/sec',     cps:9000000,    baseCost:9000000000},
+    { id:'pas_6_8', name:'👁️ Œil cosmique',            desc:'+20M/sec',    cps:20000000,   baseCost:12000000000},
+    { id:'pas_6_9', name:'🌌 Trône des dieux',         desc:'+45M/sec',    cps:45000000,   baseCost:14000000000},
+  ],
+  /* T7 – Gratte-ciel */ [
+    { id:'pas_7_0', name:'🔬 Laboratoire avancé',     desc:'+50K/sec',    cps:50000,      baseCost:6000000   },
+    { id:'pas_7_1', name:'☢️ Réacteur nucléaire',      desc:'+200K/sec',   cps:200000,     baseCost:80000000  },
+    { id:'pas_7_2', name:'🌊 Générateur marémoteur',   desc:'+600K/sec',   cps:600000,     baseCost:500000000 },
+    { id:'pas_7_3', name:'💥 Réacteur à fusion',       desc:'+1.5M/sec',   cps:1500000,    baseCost:3000000000},
+    { id:'pas_7_4', name:'🧲 Magnétron géant',         desc:'+4M/sec',     cps:4000000,    baseCost:10000000000},
+    { id:'pas_7_5', name:'🌡️ Thermodynamique ultime',  desc:'+10M/sec',    cps:10000000,   baseCost:30000000000},
+    { id:'pas_7_6', name:'⚗️ Nanofabrique',            desc:'+25M/sec',    cps:25000000,   baseCost:80000000000},
+    { id:'pas_7_7', name:'🌀 Tunnel quantique',         desc:'+65M/sec',    cps:65000000,   baseCost:140000000000},
+    { id:'pas_7_8', name:'🧠 Cerveau numérique',       desc:'+160M/sec',   cps:160000000,  baseCost:200000000000},
+    { id:'pas_7_9', name:'🔩 Méga-structure orbitale', desc:'+400M/sec',   cps:400000000,  baseCost:245000000000},
+  ],
+  /* T8 – Station spatiale */ [
+    { id:'pas_8_0', name:'🚀 Vaisseau spatial',        desc:'+250K/sec',   cps:250000,     baseCost:35000000  },
+    { id:'pas_8_1', name:'🛸 Flotte galactique',        desc:'+1M/sec',     cps:1000000,    baseCost:500000000 },
+    { id:'pas_8_2', name:'⭐ Étoile artificielle',      desc:'+3M/sec',     cps:3000000,    baseCost:5000000000},
+    { id:'pas_8_3', name:'🌟 Supernova privée',         desc:'+8M/sec',     cps:8000000,    baseCost:20000000000},
+    { id:'pas_8_4', name:'🌐 Réseau stellaire',         desc:'+20M/sec',    cps:20000000,   baseCost:70000000000},
+    { id:'pas_8_5', name:'🌑 Naine noire',              desc:'+50M/sec',    cps:50000000,   baseCost:200000000000},
+    { id:'pas_8_6', name:'☀️ Harnacheur d\'étoile',    desc:'+130M/sec',   cps:130000000,  baseCost:600000000000},
+    { id:'pas_8_7', name:'🌌 Nébuleuse artificielle',   desc:'+330M/sec',   cps:330000000,  baseCost:1500000000000},
+    { id:'pas_8_8', name:'🕳️ Trou noir contrôlé',      desc:'+850M/sec',   cps:850000000,  baseCost:3000000000000},
+    { id:'pas_8_9', name:'🌀 Galaxie privée',           desc:'+2.2B/sec',   cps:2200000000, baseCost:4800000000000},
+  ],
+  /* T9 – Complexe dimensionnel */ [
+    { id:'pas_9_0', name:'🌌 Dimension',               desc:'+1M/sec',     cps:1000000,    baseCost:200000000 },
+    { id:'pas_9_1', name:'💫 Singularité',             desc:'+5M/sec',     cps:5000000,    baseCost:2000000000},
+    { id:'pas_9_2', name:'🔮 Conscience cosmique',     desc:'+15M/sec',    cps:15000000,   baseCost:20000000000},
+    { id:'pas_9_3', name:'🌀 Nexus dimensionnel',      desc:'+50M/sec',    cps:50000000,   baseCost:150000000000},
+    { id:'pas_9_4', name:'🧿 Cristal éternel',         desc:'+150M/sec',   cps:150000000,  baseCost:800000000000},
+    { id:'pas_9_5', name:'🌟 Supernova sacrée',        desc:'+400M/sec',   cps:400000000,  baseCost:3000000000000},
+    { id:'pas_9_6', name:'⚡ Foudre divine',           desc:'+1B/sec',     cps:1000000000, baseCost:10000000000000},
+    { id:'pas_9_7', name:'🌈 Arc-en-ciel cosmique',    desc:'+2.5B/sec',   cps:2500000000, baseCost:30000000000000},
+    { id:'pas_9_8', name:'♾️ Infini générateur',       desc:'+6B/sec',     cps:6000000000, baseCost:80000000000000},
+    { id:'pas_9_9', name:'🍪 Cookie Absolu',           desc:'+15B/sec',    cps:15000000000,baseCost:200000000000000},
+  ],
 ]
+
+const _TIER_CLICKS = [
+  /* T0 */ [
+    { id:'clic_0_0', name:'👆 Coup de pouce',    desc:'+2/clic',      cpc:2,          baseCost:100       },
+    { id:'clic_0_1', name:'🤏 Pincée précise',   desc:'+4/clic',      cpc:4,          baseCost:200       },
+    { id:'clic_0_2', name:'✊ Poing ferme',       desc:'+7/clic',      cpc:7,          baseCost:350       },
+    { id:'clic_0_3', name:'🖐️ Main ouverte',     desc:'+12/clic',     cpc:12,         baseCost:550       },
+    { id:'clic_0_4', name:'🤜 Crochet du droit', desc:'+18/clic',     cpc:18,         baseCost:800       },
+    { id:'clic_0_5', name:'💪 Biceps gonflé',    desc:'+27/clic',     cpc:27,         baseCost:1000      },
+    { id:'clic_0_6', name:'🤸 Saut acrobatique', desc:'+40/clic',     cpc:40,         baseCost:1200      },
+    { id:'clic_0_7', name:'🧗 Grimpeur agile',   desc:'+55/clic',     cpc:55,         baseCost:1400      },
+    { id:'clic_0_8', name:'🏃 Sprint frénétique',desc:'+75/clic',     cpc:75,         baseCost:1600      },
+    { id:'clic_0_9', name:'🤺 Escrimeur fou',    desc:'+100/clic',    cpc:100,        baseCost:1900      },
+  ],
+  /* T1 */ [
+    { id:'clic_1_0', name:'💅 Doigt d\'or',      desc:'+10/clic',     cpc:10,         baseCost:600       },
+    { id:'clic_1_1', name:'🧤 Gant léger',       desc:'+22/clic',     cpc:22,         baseCost:1500      },
+    { id:'clic_1_2', name:'🥊 Gant de boxe',     desc:'+45/clic',     cpc:45,         baseCost:3500      },
+    { id:'clic_1_3', name:'⚒️ Marteau de forgeron',desc:'+80/clic',   cpc:80,         baseCost:6500      },
+    { id:'clic_1_4', name:'🔧 Clé anglaise',     desc:'+130/clic',    cpc:130,        baseCost:10000     },
+    { id:'clic_1_5', name:'🔨 Marteau lourd',    desc:'+200/clic',    cpc:200,        baseCost:14000     },
+    { id:'clic_1_6', name:'⛏️ Pioche de mineur', desc:'+300/clic',    cpc:300,        baseCost:17500     },
+    { id:'clic_1_7', name:'🗜️ Étau industriel',  desc:'+430/clic',    cpc:430,        baseCost:20000     },
+    { id:'clic_1_8', name:'🪚 Scie circulaire',  desc:'+600/clic',    cpc:600,        baseCost:22500     },
+    { id:'clic_1_9', name:'🪛 Tournevis turbo',  desc:'+800/clic',    cpc:800,        baseCost:24500     },
+  ],
+  /* T2 */ [
+    { id:'clic_2_0', name:'🧤 Gant magique',     desc:'+50/clic',     cpc:50,         baseCost:3500      },
+    { id:'clic_2_1', name:'🔨 Grand marteau',    desc:'+120/clic',    cpc:120,        baseCost:10000     },
+    { id:'clic_2_2', name:'⚙️ Engrenage turbo',  desc:'+260/clic',    cpc:260,        baseCost:25000     },
+    { id:'clic_2_3', name:'🔩 Boulon renforcé',  desc:'+500/clic',    cpc:500,        baseCost:55000     },
+    { id:'clic_2_4', name:'🪝 Crochet en acier', desc:'+900/clic',    cpc:900,        baseCost:100000    },
+    { id:'clic_2_5', name:'🔗 Chaîne industrielle',desc:'+1500/clic', cpc:1500,       baseCost:150000    },
+    { id:'clic_2_6', name:'⚒️ Double pioche',    desc:'+2300/clic',   cpc:2300,       baseCost:195000    },
+    { id:'clic_2_7', name:'🏗️ Bras de grue',     desc:'+3400/clic',   cpc:3400,       baseCost:230000    },
+    { id:'clic_2_8', name:'🚛 Bulldozer',         desc:'+5000/clic',   cpc:5000,       baseCost:265000    },
+    { id:'clic_2_9', name:'🏎️ Turbo-clic',        desc:'+7000/clic',   cpc:7000,       baseCost:295000    },
+  ],
+  /* T3 */ [
+    { id:'clic_3_0', name:'👊 Poing d\'acier',   desc:'+200/clic',    cpc:200,        baseCost:18000     },
+    { id:'clic_3_1', name:'🔫 Pisto-cliqueur',   desc:'+600/clic',    cpc:600,        baseCost:70000     },
+    { id:'clic_3_2', name:'⚡ Décharge électrique',desc:'+1500/clic',  cpc:1500,       baseCost:200000    },
+    { id:'clic_3_3', name:'💣 Explosif tactique', desc:'+3500/clic',   cpc:3500,       baseCost:500000    },
+    { id:'clic_3_4', name:'🚀 Mini-roquette',    desc:'+7000/clic',   cpc:7000,       baseCost:1000000   },
+    { id:'clic_3_5', name:'🛡️ Bouclier pulsé',   desc:'+13000/clic',  cpc:13000,      baseCost:1800000   },
+    { id:'clic_3_6', name:'⚔️ Épée runique',     desc:'+22000/clic',  cpc:22000,      baseCost:2500000   },
+    { id:'clic_3_7', name:'🗡️ Dague empoisonnée',desc:'+35000/clic',  cpc:35000,      baseCost:3000000   },
+    { id:'clic_3_8', name:'🏹 Arc de cristal',   desc:'+55000/clic',  cpc:55000,      baseCost:3500000   },
+    { id:'clic_3_9', name:'🌩️ Foudre canalisée', desc:'+80000/clic',  cpc:80000,      baseCost:3900000   },
+  ],
+  /* T4 */ [
+    { id:'clic_4_0', name:'⚡ Laser de combat',   desc:'+1000/clic',   cpc:1000,       baseCost:100000    },
+    { id:'clic_4_1', name:'🔬 Micro-injecteur',   desc:'+3000/clic',   cpc:3000,       baseCost:500000    },
+    { id:'clic_4_2', name:'🧲 Aimant turbo',      desc:'+7000/clic',   cpc:7000,       baseCost:1500000   },
+    { id:'clic_4_3', name:'💡 Éclair ionique',    desc:'+16000/clic',  cpc:16000,      baseCost:5000000   },
+    { id:'clic_4_4', name:'📡 Pulse satellite',   desc:'+30000/clic',  cpc:30000,      baseCost:12000000  },
+    { id:'clic_4_5', name:'🛸 Rayon tracteur',    desc:'+55000/clic',  cpc:55000,      baseCost:22000000  },
+    { id:'clic_4_6', name:'💥 Onde de choc',      desc:'+90000/clic',  cpc:90000,      baseCost:33000000  },
+    { id:'clic_4_7', name:'🌪️ Tornade quantique', desc:'+140K/clic',   cpc:140000,     baseCost:43000000  },
+    { id:'clic_4_8', name:'⚗️ Synthèse forcée',   desc:'+210K/clic',   cpc:210000,     baseCost:52000000  },
+    { id:'clic_4_9', name:'🌀 Vortex industriel', desc:'+320K/clic',   cpc:320000,     baseCost:59000000  },
+  ],
+  /* T5 */ [
+    { id:'clic_5_0', name:'☄️ Météorite',         desc:'+5000/clic',   cpc:5000,       baseCost:600000    },
+    { id:'clic_5_1', name:'🌀 Vortex cosmique',   desc:'+15000/clic',  cpc:15000,      baseCost:4000000   },
+    { id:'clic_5_2', name:'💫 Éclat stellaire',   desc:'+40000/clic',  cpc:40000,      baseCost:15000000  },
+    { id:'clic_5_3', name:'🌋 Lave quantique',    desc:'+100K/clic',   cpc:100000,     baseCost:45000000  },
+    { id:'clic_5_4', name:'🧠 Télékinésie',       desc:'+230K/clic',   cpc:230000,     baseCost:120000000 },
+    { id:'clic_5_5', name:'🌩️ Tempête EM',         desc:'+500K/clic',   cpc:500000,     baseCost:280000000 },
+    { id:'clic_5_6', name:'🌟 Implosion stellaire',desc:'+1M/clic',    cpc:1000000,    baseCost:480000000 },
+    { id:'clic_5_7', name:'🔥 Soleil artificiel',  desc:'+2M/clic',    cpc:2000000,    baseCost:650000000 },
+    { id:'clic_5_8', name:'♾️ Cycle infini',       desc:'+3.8M/clic',  cpc:3800000,    baseCost:780000000 },
+    { id:'clic_5_9', name:'🌐 Pulse mondial',      desc:'+7M/clic',    cpc:7000000,    baseCost:880000000 },
+  ],
+  /* T6 */ [
+    { id:'clic_6_0', name:'🌌 Supernova',          desc:'+25K/clic',   cpc:25000,      baseCost:4000000   },
+    { id:'clic_6_1', name:'🔮 Orbe magique',       desc:'+80K/clic',   cpc:80000,      baseCost:25000000  },
+    { id:'clic_6_2', name:'🧿 Œil du chaos',       desc:'+220K/clic',  cpc:220000,     baseCost:100000000 },
+    { id:'clic_6_3', name:'⚡ Foudre runique',     desc:'+600K/clic',  cpc:600000,     baseCost:350000000 },
+    { id:'clic_6_4', name:'🌀 Spirale astrale',    desc:'+1.5M/clic',  cpc:1500000,    baseCost:1000000000},
+    { id:'clic_6_5', name:'🔥 Phénix cosmique',    desc:'+3.5M/clic',  cpc:3500000,    baseCost:3000000000},
+    { id:'clic_6_6', name:'🌒 Éclipse totale',     desc:'+8M/clic',    cpc:8000000,    baseCost:6000000000},
+    { id:'clic_6_7', name:'👁️ Regard du dieu',     desc:'+18M/clic',   cpc:18000000,   baseCost:9500000000},
+    { id:'clic_6_8', name:'🌟 Éclat divin',        desc:'+40M/clic',   cpc:40000000,   baseCost:12500000000},
+    { id:'clic_6_9', name:'🌠 Volonté cosmique',   desc:'+90M/clic',   cpc:90000000,   baseCost:14500000000},
+  ],
+  /* T7 */ [
+    { id:'clic_7_0', name:'🌟 Supernova XXL',      desc:'+150K/clic',  cpc:150000,     baseCost:25000000  },
+    { id:'clic_7_1', name:'🧬 ADN quantique',      desc:'+500K/clic',  cpc:500000,     baseCost:200000000 },
+    { id:'clic_7_2', name:'💫 Quasar focalisé',    desc:'+1.5M/clic',  cpc:1500000,    baseCost:1500000000},
+    { id:'clic_7_3', name:'⚡ Antimasse',           desc:'+4M/clic',    cpc:4000000,    baseCost:8000000000},
+    { id:'clic_7_4', name:'🕳️ Trou de ver',        desc:'+10M/clic',   cpc:10000000,   baseCost:25000000000},
+    { id:'clic_7_5', name:'🌌 Matière noire',       desc:'+25M/clic',   cpc:25000000,   baseCost:60000000000},
+    { id:'clic_7_6', name:'☢️ Plasma atomique',    desc:'+65M/clic',   cpc:65000000,   baseCost:110000000000},
+    { id:'clic_7_7', name:'🔬 Nanobot massif',     desc:'+160M/clic',  cpc:160000000,  baseCost:165000000000},
+    { id:'clic_7_8', name:'🧠 Cerveau cosmique',   desc:'+400M/clic',  cpc:400000000,  baseCost:210000000000},
+    { id:'clic_7_9', name:'🌀 Fractale infinie',    desc:'+1B/clic',    cpc:1000000000, baseCost:248000000000},
+  ],
+  /* T8 */ [
+    { id:'clic_8_0', name:'🧬 ADN galactique',     desc:'+750K/clic',  cpc:750000,     baseCost:200000000 },
+    { id:'clic_8_1', name:'🔮 Prophétie',          desc:'+3M/clic',    cpc:3000000,    baseCost:2000000000},
+    { id:'clic_8_2', name:'🌀 Singularité-clic',   desc:'+10M/clic',   cpc:10000000,   baseCost:15000000000},
+    { id:'clic_8_3', name:'💥 Big Crunch',          desc:'+30M/clic',   cpc:30000000,   baseCost:60000000000},
+    { id:'clic_8_4', name:'🌟 Quasar chargé',      desc:'+80M/clic',   cpc:80000000,   baseCost:200000000000},
+    { id:'clic_8_5', name:'🌌 Dimension pulse',    desc:'+200M/clic',  cpc:200000000,  baseCost:600000000000},
+    { id:'clic_8_6', name:'♾️ Boucle infinie',     desc:'+500M/clic',  cpc:500000000,  baseCost:1500000000000},
+    { id:'clic_8_7', name:'🔥 Géante rouge',       desc:'+1.2B/clic',  cpc:1200000000, baseCost:2500000000000},
+    { id:'clic_8_8', name:'🕳️ Horizon des événements',desc:'+3B/clic', cpc:3000000000, baseCost:3800000000000},
+    { id:'clic_8_9', name:'🌈 Rayon cosmique',     desc:'+7.5B/clic',  cpc:7500000000, baseCost:4900000000000},
+  ],
+  /* T9 */ [
+    { id:'clic_9_0', name:'🔮 Maîtrise cosmique',  desc:'+4M/clic',    cpc:4000000,    baseCost:2000000000},
+    { id:'clic_9_1', name:'💫 Ondes temporelles',  desc:'+15M/clic',   cpc:15000000,   baseCost:20000000000},
+    { id:'clic_9_2', name:'🌀 Fracture de réalité',desc:'+50M/clic',   cpc:50000000,   baseCost:150000000000},
+    { id:'clic_9_3', name:'⚡ Dieu du tonnerre',   desc:'+150M/clic',  cpc:150000000,  baseCost:800000000000},
+    { id:'clic_9_4', name:'🌟 Conscience absolue', desc:'+400M/clic',  cpc:400000000,  baseCost:4000000000000},
+    { id:'clic_9_5', name:'♾️ Infini cliquable',   desc:'+1B/clic',    cpc:1000000000, baseCost:15000000000000},
+    { id:'clic_9_6', name:'🔥 Feu primordial',     desc:'+2.5B/clic',  cpc:2500000000, baseCost:40000000000000},
+    { id:'clic_9_7', name:'🌌 Créateur de monde',  desc:'+6B/clic',    cpc:6000000000, baseCost:100000000000000},
+    { id:'clic_9_8', name:'👁️ Œil de l\'Absolu',   desc:'+15B/clic',   cpc:15000000000,baseCost:300000000000000},
+    { id:'clic_9_9', name:'🍪 Le Grand Clic',      desc:'+40B/clic',   cpc:40000000000,baseCost:900000000000000},
+  ],
+]
+
+const UPGRADES = [
+  ..._TIER_PASSIVES.flatMap((arr, t) => arr.map(u => ({ ...u, requiredTier: t }))),
+  ..._TIER_CLICKS.flatMap((arr, t) => arr.map(u => ({ ...u, requiredTier: t }))),
+]
+
 
 const TIERS = [
   { id: 0, name: 'Cabane en bois',        icon: '🪵', cost: 0              },
@@ -606,67 +805,75 @@ export default function Game({ user, onLogout }) {
           </div>
 
           <div className="upgrades-section-label">⏱️ Passif</div>
-          {UPGRADES.filter(u => u.cps).map(upgrade => {
+          {UPGRADES.filter(u => u.cps && u.requiredTier === tier).map(upgrade => {
             const count     = owned[upgrade.id] || 0
             const cost      = getUpgradeCost(upgrade, count)
             const canAfford = cookies >= cost
-            const isLocked  = (upgrade.requiredTier ?? 0) > tier
             return (
               <button
                 key={upgrade.id}
-                className={`upgrade-item ${isLocked ? 'locked' : canAfford ? 'affordable' : 'expensive'}`}
-                onClick={() => !isLocked && buyUpgrade(upgrade)}
-                disabled={!canAfford || isLocked}
+                className={`upgrade-item ${canAfford ? 'affordable' : 'expensive'}`}
+                onClick={() => buyUpgrade(upgrade)}
+                disabled={!canAfford}
               >
                 <span className="upgrade-icon">{upgrade.name.split(' ')[0]}</span>
                 <div className="upgrade-info">
                   <span className="upgrade-name">{upgrade.name.slice(upgrade.name.indexOf(' ') + 1)}</span>
-                  <span className="upgrade-desc">
-                    {isLocked
-                      ? `🔒 ${TIERS[upgrade.requiredTier].icon} ${TIERS[upgrade.requiredTier].name} requis`
-                      : upgrade.desc}
-                  </span>
+                  <span className="upgrade-desc">{upgrade.desc}</span>
                 </div>
                 <div className="upgrade-meta">
-                  {isLocked
-                    ? <span className="upgrade-lock">🔒</span>
-                    : <><span className="upgrade-cost">{fmt(cost)} 🍪</span>{count > 0 && <span className="upgrade-count">×{count}</span>}</>}
+                  <span className="upgrade-cost">{fmt(cost)} 🍪</span>
+                  {count > 0 && <span className="upgrade-count">×{count}</span>}
                 </div>
               </button>
             )
           })}
+          {tier < TIERS.length - 1 && (
+            <button className="upgrade-item locked tier-teaser" disabled>
+              <span className="upgrade-icon">🔒</span>
+              <div className="upgrade-info">
+                <span className="upgrade-name">+{_TIER_PASSIVES[tier + 1].length} passifs débloqués</span>
+                <span className="upgrade-desc">{TIERS[tier + 1].icon} {TIERS[tier + 1].name} requis</span>
+              </div>
+              <div className="upgrade-meta"><span className="upgrade-lock">🔒</span></div>
+            </button>
+          )}
 
           <div className="upgrades-divider" />
           <div className="upgrades-section-label">👆 Clic</div>
-          {UPGRADES.filter(u => u.cpc).map(upgrade => {
+          {UPGRADES.filter(u => u.cpc && u.requiredTier === tier).map(upgrade => {
             const count     = owned[upgrade.id] || 0
             const cost      = getUpgradeCost(upgrade, count)
             const canAfford = cookies >= cost
-            const isLocked  = (upgrade.requiredTier ?? 0) > tier
             return (
               <button
                 key={upgrade.id}
-                className={`upgrade-item ${isLocked ? 'locked' : canAfford ? 'affordable' : 'expensive'}`}
-                onClick={() => !isLocked && buyUpgrade(upgrade)}
-                disabled={!canAfford || isLocked}
+                className={`upgrade-item ${canAfford ? 'affordable' : 'expensive'}`}
+                onClick={() => buyUpgrade(upgrade)}
+                disabled={!canAfford}
               >
                 <span className="upgrade-icon">{upgrade.name.split(' ')[0]}</span>
                 <div className="upgrade-info">
                   <span className="upgrade-name">{upgrade.name.slice(upgrade.name.indexOf(' ') + 1)}</span>
-                  <span className="upgrade-desc">
-                    {isLocked
-                      ? `🔒 ${TIERS[upgrade.requiredTier].icon} ${TIERS[upgrade.requiredTier].name} requis`
-                      : upgrade.desc}
-                  </span>
+                  <span className="upgrade-desc">{upgrade.desc}</span>
                 </div>
                 <div className="upgrade-meta">
-                  {isLocked
-                    ? <span className="upgrade-lock">🔒</span>
-                    : <><span className="upgrade-cost">{fmt(cost)} 🍪</span>{count > 0 && <span className="upgrade-count">×{count}</span>}</>}
+                  <span className="upgrade-cost">{fmt(cost)} 🍪</span>
+                  {count > 0 && <span className="upgrade-count">×{count}</span>}
                 </div>
               </button>
             )
           })}
+          {tier < TIERS.length - 1 && (
+            <button className="upgrade-item locked tier-teaser" disabled>
+              <span className="upgrade-icon">🔒</span>
+              <div className="upgrade-info">
+                <span className="upgrade-name">+{_TIER_CLICKS[tier + 1].length} clics débloqués</span>
+                <span className="upgrade-desc">{TIERS[tier + 1].icon} {TIERS[tier + 1].name} requis</span>
+              </div>
+              <div className="upgrade-meta"><span className="upgrade-lock">🔒</span></div>
+            </button>
+          )}
 
           <div className="upgrades-divider" />
           <h2 className="upgrades-title">Paris rapides</h2>

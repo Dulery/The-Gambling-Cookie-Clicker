@@ -2031,3 +2031,10 @@ body {
 .upgrade-lock {
   font-size: 1rem;
 }
+.tier-teaser {
+  opacity: 0.55 !important;
+  border: 1px dashed rgba(255,200,80,0.3) !important;
+  background: rgba(255,180,30,0.04) !important;
+  filter: none !important;
+  margin-top: 4px;
+}
