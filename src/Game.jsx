@@ -30,16 +30,16 @@ const UPGRADES = [
 ]
 
 const TIERS = [
-  { id: 0, name: 'Cabane en bois',        icon: '🪵', cost: 0            },
-  { id: 1, name: 'Petite maison',          icon: '🏠', cost: 500          },
-  { id: 2, name: 'Maison de famille',      icon: '🏡', cost: 5000         },
-  { id: 3, name: 'Appartement',            icon: '🏢', cost: 50000        },
-  { id: 4, name: 'Commerce',               icon: '🏬', cost: 500000       },
-  { id: 5, name: 'Usine',                  icon: '🏭', cost: 5000000      },
-  { id: 6, name: 'Château',               icon: '🏰', cost: 50000000     },
-  { id: 7, name: 'Gratte-ciel',            icon: '🏙️', cost: 500000000    },
-  { id: 8, name: 'Station spatiale',       icon: '🌌', cost: 5000000000   },
-  { id: 9, name: 'Complexe dimensionnel',  icon: '🌀', cost: 50000000000  },
+  { id: 0, name: 'Cabane en bois',        icon: '🪵', cost: 0              },
+  { id: 1, name: 'Petite maison',          icon: '🏠', cost: 2000           },
+  { id: 2, name: 'Maison de famille',      icon: '🏡', cost: 25000          },
+  { id: 3, name: 'Appartement',            icon: '🏢', cost: 300000         },
+  { id: 4, name: 'Commerce',               icon: '🏬', cost: 4000000        },
+  { id: 5, name: 'Usine',                  icon: '🏭', cost: 60000000       },
+  { id: 6, name: 'Château',               icon: '🏰', cost: 900000000      },
+  { id: 7, name: 'Gratte-ciel',            icon: '🏙️', cost: 15000000000    },
+  { id: 8, name: 'Station spatiale',       icon: '🌌', cost: 250000000000   },
+  { id: 9, name: 'Complexe dimensionnel',  icon: '🌀', cost: 5000000000000  },
 ]
 
 function getUpgradeCost(upgrade, owned) {
