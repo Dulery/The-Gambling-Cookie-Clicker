@@ -6,16 +6,46 @@ import Life, { getDefaultAssets } from './Life.jsx'
 
 const UPGRADES = [
   // ── Passifs ──
-  { id: 'cursor',    name: '🖱️ Cursor',          desc: '+1 cookie/sec',     baseCost: 150,        cps: 1,       requiredTier: 0 },
-  { id: 'grandma',   name: '👵 Mamie',            desc: '+5 cookies/sec',    baseCost: 600,        cps: 5,       requiredTier: 1 },
-  { id: 'farm',      name: '🌾 Ferme',            desc: '+20 cookies/sec',   baseCost: 2500,       cps: 20,      requiredTier: 2 },
-  { id: 'mine',      name: '⛏️ Mine',             desc: '+100 cookies/sec',  baseCost: 10000,      cps: 100,     requiredTier: 3 },
-  { id: 'factory',   name: '🏭 Usine',            desc: '+500 cookies/sec',  baseCost: 40000,      cps: 500,     requiredTier: 4 },
-  { id: 'portal',    name: '🌀 Portail',          desc: '+2k cookies/sec',   baseCost: 200000,     cps: 2000,    requiredTier: 5 },
-  { id: 'temple',    name: '🛕 Temple',           desc: '+10k cookies/sec',  baseCost: 1000000,    cps: 10000,   requiredTier: 6 },
-  { id: 'lab',       name: '🔬 Laboratoire',      desc: '+50k cookies/sec',  baseCost: 6000000,    cps: 50000,   requiredTier: 7 },
-  { id: 'spaceship', name: '🚀 Vaisseau',         desc: '+250k cookies/sec', baseCost: 35000000,   cps: 250000,  requiredTier: 8 },
-  { id: 'dimension', name: '🌌 Dimension',        desc: '+1M cookies/sec',   baseCost: 200000000,  cps: 1000000, requiredTier: 9 },
+  // Tier 0
+  { id: 'cursor',     name: '🖱️ Cursor',               desc: '+1 cookie/sec',       baseCost: 150,           cps: 1,        requiredTier: 0 },
+  { id: 'mulot',      name: '🐁 Mulot mécanique',       desc: '+4 cookies/sec',      baseCost: 500,           cps: 4,        requiredTier: 0 },
+  { id: 'grimoire',   name: '📜 Vieux grimoire',         desc: '+12 cookies/sec',     baseCost: 1500,          cps: 12,       requiredTier: 0 },
+  // Tier 1
+  { id: 'grandma',    name: '👵 Mamie',                  desc: '+5 cookies/sec',      baseCost: 600,           cps: 5,        requiredTier: 1 },
+  { id: 'chef',       name: '🧑‍🍳 Cuisinier',            desc: '+18 cookies/sec',     baseCost: 3000,          cps: 18,       requiredTier: 1 },
+  { id: 'potager',    name: '🌻 Potager',                desc: '+55 cookies/sec',     baseCost: 10000,         cps: 55,       requiredTier: 1 },
+  // Tier 2
+  { id: 'farm',       name: '🌾 Ferme',                  desc: '+20 cookies/sec',     baseCost: 2500,          cps: 20,       requiredTier: 2 },
+  { id: 'elevage',    name: '🐄 Élevage',                desc: '+80 cookies/sec',     baseCost: 15000,         cps: 80,       requiredTier: 2 },
+  { id: 'chantier',   name: '🏗️ Chantier',               desc: '+250 cookies/sec',    baseCost: 70000,         cps: 250,      requiredTier: 2 },
+  // Tier 3
+  { id: 'mine',       name: '⛏️ Mine',                   desc: '+100 cookies/sec',    baseCost: 10000,         cps: 100,      requiredTier: 3 },
+  { id: 'puits',      name: '🛢️ Puits de pétrole',       desc: '+400 cookies/sec',    baseCost: 100000,        cps: 400,      requiredTier: 3 },
+  { id: 'atelier',    name: '⚙️ Atelier industriel',     desc: '+1200 cookies/sec',   baseCost: 700000,        cps: 1200,     requiredTier: 3 },
+  // Tier 4
+  { id: 'factory',    name: '🏭 Usine',                  desc: '+500 cookies/sec',    baseCost: 40000,         cps: 500,      requiredTier: 4 },
+  { id: 'centrale',   name: '🔋 Centrale électrique',    desc: '+2000 cookies/sec',   baseCost: 1500000,       cps: 2000,     requiredTier: 4 },
+  { id: 'robot',      name: '🤖 Labo robotique',          desc: '+7000 cookies/sec',   baseCost: 12000000,      cps: 7000,     requiredTier: 4 },
+  // Tier 5
+  { id: 'portal',     name: '🚪 Portail',                desc: '+2000 cookies/sec',   baseCost: 200000,        cps: 2000,     requiredTier: 5 },
+  { id: 'telescope',  name: '🔭 Observatoire',           desc: '+12k cookies/sec',    baseCost: 15000000,      cps: 12000,    requiredTier: 5 },
+  { id: 'superpc',    name: '💻 Superordinateur',         desc: '+40k cookies/sec',    baseCost: 100000000,     cps: 40000,    requiredTier: 5 },
+  // Tier 6
+  { id: 'temple',     name: '🛕 Temple',                 desc: '+10k cookies/sec',    baseCost: 1000000,       cps: 10000,    requiredTier: 6 },
+  { id: 'nexus',      name: '🌠 Nexus cosmique',          desc: '+70k cookies/sec',    baseCost: 200000000,     cps: 70000,    requiredTier: 6 },
+  { id: 'alchimie',   name: '⚗️ Alchimiste',             desc: '+250k cookies/sec',   baseCost: 2000000000,    cps: 250000,   requiredTier: 6 },
+  // Tier 7
+  { id: 'lab',        name: '🔬 Laboratoire',             desc: '+50k cookies/sec',    baseCost: 6000000,       cps: 50000,    requiredTier: 7 },
+  { id: 'nucleaire',  name: '☢️ Réacteur nucléaire',      desc: '+400k cookies/sec',   baseCost: 5000000000,    cps: 400000,   requiredTier: 7 },
+  { id: 'maree',      name: '🌊 Générateur de marée',     desc: '+1.5M cookies/sec',   baseCost: 40000000000,   cps: 1500000,  requiredTier: 7 },
+  // Tier 8
+  { id: 'spaceship',  name: '🚀 Vaisseau',                desc: '+250k cookies/sec',   baseCost: 35000000,      cps: 250000,   requiredTier: 8 },
+  { id: 'flotte',     name: '🛸 Flotte galactique',       desc: '+3M cookies/sec',     baseCost: 20000000000,   cps: 3000000,  requiredTier: 8 },
+  { id: 'etoile',     name: '⭐ Étoile artificielle',     desc: '+10M cookies/sec',    baseCost: 300000000000,  cps: 10000000, requiredTier: 8 },
+  // Tier 9
+  { id: 'dimension',  name: '🌌 Dimension',               desc: '+1M cookies/sec',     baseCost: 200000000,     cps: 1000000,  requiredTier: 9 },
+  { id: 'singularity',name: '💫 Singularité',             desc: '+20M cookies/sec',    baseCost: 500000000000,  cps: 20000000, requiredTier: 9 },
+  { id: 'conscience', name: '🔮 Conscience universelle',  desc: '+70M cookies/sec',    baseCost: 5000000000000, cps: 70000000, requiredTier: 9 },
   // ── Clic ──
   { id: 'click1',    name: '👆 Coup de pouce',    desc: '+2 cookies/clic',    baseCost: 100,        cpc: 2,       requiredTier: 0 },
   { id: 'click2',    name: '💅 Doigt d\'or',      desc: '+10 cookies/clic',   baseCost: 600,        cpc: 10,      requiredTier: 1 },
