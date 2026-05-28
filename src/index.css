@@ -1011,6 +1011,14 @@ body {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.lb-tier {
+  font-size: 0.78rem;
+  color: var(--text-muted, #aaa);
+  white-space: nowrap;
+  background: rgba(255,255,255,0.06);
+  border-radius: 6px;
+  padding: 0.15rem 0.5rem;
+}
 .lb-score {
   font-variant-numeric: tabular-nums;
   font-weight: 700;
