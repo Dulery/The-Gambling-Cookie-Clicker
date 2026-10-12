@@ -573,7 +573,7 @@ function evaluatePokerHand(hand) {
     const pairVal = parseInt(Object.entries(counts).find(([, c]) => c === 2)[0])
     if (pairVal === 1 || pairVal >= 11)  return { name: 'Paire (Valet ou +)',  mult: 1,   rank: 1 }
   }
-  return { name: 'Rien', mult: 0, rank: 0 }
+  return { name: 'Rien', mult: 0.5, rank: 0 }
 }
 
 function Poker({ cookies, onResult, onMentalChange }) {
@@ -656,7 +656,7 @@ function Poker({ cookies, onResult, onMentalChange }) {
               <span className="poker-ref-name">Rien</span>
               <span className="poker-ref-short">Paire de 10 ou moins</span>
             </div>
-            <span className="poker-ref-mult poker-ref-mult-zero">×0</span>
+            <span className="poker-ref-mult poker-ref-mult-zero">×0.5</span>
           </div>
         </div>
       )}
