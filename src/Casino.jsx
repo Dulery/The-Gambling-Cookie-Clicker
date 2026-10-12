@@ -362,17 +362,17 @@ function Blackjack({ cookies, onResult, onMentalChange }) {
 // win: true  → return bet × mult (net gain = bet × (mult-1))
 // win: false → lose bet × mult total (after bet already deducted, adjust by bet×(1-mult))
 const WHEEL_SEGS = [
-  { icon: '🍋', label: '×1.2',  win: true,  mult: 1.2, color: '#a16207', textColor: '#fff', weight: 7 },
+  { icon: '🍋', label: '×2',    win: true,  mult: 2,   color: '#a16207', textColor: '#fff', weight: 7 },
   { icon: '😅', label: '-½×',   win: false, mult: 0.5, color: '#92400e', textColor: '#fed7aa', weight: 7 },
-  { icon: '🍪', label: '×1.7',  win: true,  mult: 1.7, color: '#15803d', textColor: '#fff', weight: 6 },
+  { icon: '🍪', label: '×3',    win: true,  mult: 3,   color: '#15803d', textColor: '#fff', weight: 6 },
   { icon: '💸', label: '-1×',   win: false, mult: 1,   color: '#991b1b', textColor: '#fff', weight: 6 },
-  { icon: '🔔', label: '×2.5',  win: true,  mult: 2.5, color: '#c2410c', textColor: '#fff', weight: 3 },
+  { icon: '🔔', label: '×5',    win: true,  mult: 5,   color: '#c2410c', textColor: '#fff', weight: 3 },
   { icon: '😬', label: '-1.5×', win: false, mult: 1.5, color: '#7f1d1d', textColor: '#fca5a5', weight: 5 },
-  { icon: '💎', label: '×4',    win: true,  mult: 4,   color: '#1d4ed8', textColor: '#fff', weight: 2 },
+  { icon: '💎', label: '×8',   win: true,  mult: 10,  color: '#1d4ed8', textColor: '#fff', weight: 2 },
   { icon: '💀', label: '-2×',   win: false, mult: 2,   color: '#450a0a', textColor: '#ef4444', weight: 4 },
-  { icon: '⭐', label: '×8',    win: true,  mult: 8,   color: '#6d28d9', textColor: '#fff', weight: 1 },
+  { icon: '⭐', label: '×10',   win: true,  mult: 20,  color: '#6d28d9', textColor: '#fff', weight: 1 },
   { icon: '☠️', label: '-3×',   win: false, mult: 3,   color: '#1c0000', textColor: '#f87171', weight: 3 },
-  { icon: '👑', label: '×18',   win: true,  mult: 18,  color: '#d97706', textColor: '#000', weight: 1 },
+  { icon: '👑', label: '×20',   win: true,  mult: 50,  color: '#d97706', textColor: '#000', weight: 1 },
   { icon: '🔥', label: '-5×',   win: false, mult: 5,   color: '#0d0000', textColor: '#fca5a5', weight: 2 },
 ]
 
